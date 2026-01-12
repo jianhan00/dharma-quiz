@@ -84,7 +84,8 @@ mark{padding:0 2px;border-radius:4px}
 
       <button id="searchBtn" class="btn brand">搜尋</button>
       <button id="searchClearBtn" class="btn ghost">清除</button>
-      <!-- ✅ 你要的按鈕：用搜尋命中的題目組卷（可跨章） -->
+
+      <!-- ✅ 只保留這顆：用搜尋命中題目組卷（可跨章） -->
       <button id="searchPracticeBtn" class="btn brand" style="display:none;">用搜尋結果開始練習</button>
     </div>
 
@@ -108,22 +109,17 @@ function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0
 
 let BANK = [];
 let SECTIONS = [];
-let LAST_HITS = []; // ✅ 記住搜尋命中的題號，供「用搜尋結果開始練習」
+let LAST_HITS = [];
 
 async function init(){
   try {
-    // ✅ Safari / iOS 強快取修正：只在 fetch 加上 cache: 'no-store'，其餘不動
     const r = await fetch('questions.json?t=' + new Date().getTime(), { cache: 'no-store' });
     if(!r.ok) throw new Error('讀取失敗');
     BANK = await r.json();
 
-    // 章節清單
     SECTIONS = [...new Set(BANK.map(q => q.section || '未分類'))];
 
-    // ✅ 先掛上刷題
     mountStudent('#panel-student');
-
-    // ✅ 再啟用搜尋（不影響刷題）
     initSearchUI();
 
   } catch(e) {
@@ -132,20 +128,18 @@ async function init(){
 }
 
 /* =========================
-   搜尋功能（跨章 / 單章）
+   搜尋功能（跨章 / 單章）+ 顯示解析
+   只保留「用搜尋結果開始練習」
 ========================= */
 function initSearchUI(){
-  // 顯示搜尋卡片
   $('#search-card').style.display = '';
 
-  // 填入下拉：全部章節 + 各章
   const sel = $('#searchScope');
   sel.innerHTML = `
     <option value="__all__" selected>全部章節（跨章）</option>
     ${SECTIONS.map(s => `<option value="${escapeHtmlAttr(s)}">只搜：${escapeHtml(s)}</option>`).join('')}
   `;
 
-  // 綁定事件
   $('#searchBtn').onclick = () => doSearch();
   $('#searchClearBtn').onclick = () => clearSearch();
   $('#searchPracticeBtn').onclick = () => startPracticeFromHitList();
@@ -177,7 +171,6 @@ function doSearch(){
 
   const kw = kwRaw.toLowerCase();
 
-  // 篩選題目：題幹/選項/解析 任一包含
   const hits = [];
   for(let i=0;i<BANK.length;i++){
     const q = BANK[i];
@@ -197,35 +190,25 @@ function doSearch(){
 
   $('#searchInfo').textContent = `找到 ${hits.length} 題（範圍：${scope==='__all__'?'全部章節':scope}）`;
 
-  // ✅ 記住命中的題號（供「用搜尋結果開始練習」）
   LAST_HITS = hits.map(x => x.idx);
+  $('#searchPracticeBtn').style.display = (LAST_HITS.length > 0) ? '' : 'none';
 
-  // ✅ 顯示/隱藏「用搜尋結果開始練習」按鈕
-  const pb = $('#searchPracticeBtn');
-  pb.style.display = (LAST_HITS.length > 0) ? '' : 'none';
-
-  // 顯示結果（先顯示前 100 題，避免太長）
   const show = hits.slice(0, 100);
   $('#searchResults').innerHTML = show.length ? `
-    ${show.map(item => renderHit(item.idx, item.q, kwRaw)).join('')}
+    ${show.map(item => renderHitWithExplanation(item.idx, item.q, kwRaw)).join('')}
     ${hits.length>100 ? `<div class="searchInfo">（結果超過 100 題，先顯示前 100 題）</div>` : ``}
   ` : `<div class="searchInfo">沒有找到符合的題目。你可以換個關鍵字或改成「全部章節」。</div>`;
-
-  // 點「帶入刷題」按鈕時的事件委派
-  $('#searchResults').querySelectorAll('[data-action="startFrom"]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const qi = parseInt(e.currentTarget.getAttribute('data-qi'), 10);
-      startPracticeFromQuestionIndex(qi);
-    });
-  });
 }
 
-function renderHit(idx, q, kwRaw){
+function renderHitWithExplanation(idx, q, kwRaw){
   const section = escapeHtml(q.section || '未分類');
   const question = highlight(escapeHtml(q.question || ''), kwRaw);
+
   const optText = (q.options||[]).map((t, i)=>`${String.fromCharCode(65+i)}. ${t}`).join('　');
   const options = highlight(escapeHtml(optText), kwRaw);
-  const exp = q.explanation ? highlight(escapeHtml(q.explanation), kwRaw) : '（無解析）';
+
+  const expText = q.explanation ? q.explanation : '（無解析）';
+  const exp = highlight(escapeHtml(expText), kwRaw);
 
   return `
     <div class="resultItem">
@@ -233,14 +216,11 @@ function renderHit(idx, q, kwRaw){
       <div class="resultMeta">章節：${section}　｜　題號索引：${idx+1}</div>
       <div class="resultSmall"><b>選項：</b>${options || '（無）'}</div>
       <div class="resultSmall"><b>解析：</b>${exp}</div>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn brand" data-action="startFrom" data-qi="${idx}">用這題開始刷題（同章節）</button>
-      </div>
     </div>
   `;
 }
 
-/* ✅ 新增：把「搜尋命中題目」直接組成練習卷（可跨章） */
+/* ✅ 用搜尋命中題目組成練習卷（可跨章） */
 function startPracticeFromHitList(){
   if(!LAST_HITS || LAST_HITS.length === 0){
     alert('目前沒有搜尋結果可練習，請先搜尋。');
@@ -253,8 +233,6 @@ function startPracticeFromHitList(){
   }
 
   const st = root._state;
-
-  // 直接用命中題號當練習卷（可跨章）
   st.paper = [...LAST_HITS];
   st.idx = 0;
   st.right = 0;
@@ -267,39 +245,6 @@ function startPracticeFromHitList(){
   render(root);
 
   root.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-/* 保留：用單題定位進刷題區（同章節） */
-function startPracticeFromQuestionIndex(qi){
-  const sec = (BANK[qi].section || '未分類');
-
-  const root = $('#panel-student');
-  if(!root._state){
-    mountStudent('#panel-student');
-  }
-
-  // 依照「同章節」建立 paper（順序）
-  const poolIdx = BANK.map((q,i)=>({q,i}))
-    .filter(x => (x.q.section||'未分類') === sec)
-    .map(x=>x.i);
-
-  // 定位到該題在同章 paper 的位置
-  const pos = poolIdx.indexOf(qi);
-
-  // 套用到刷題 state
-  const st2 = $('#panel-student')._state;
-  st2.paper = poolIdx;
-  st2.idx = Math.max(0, pos);
-  st2.right = 0; st2.user = {}; st2.revealed = {}; st2.firstScored = {};
-
-  // 讓 UI 進入作答狀態
-  $('#panel-student').querySelector('.s-finish').disabled = false;
-  $('#panel-student').querySelector('.s-nav').classList.remove('hidden');
-
-  render($('#panel-student'));
-
-  // 捲動到刷題區
-  $('#panel-student').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 /* =========================
@@ -341,19 +286,19 @@ function mountStudent(selector){
     </div>
     <div class="report hidden s-report"></div>
   `;
-  
+
   const state = {paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}};
   el._state = state;
-  
+
   const secs = [...new Set(BANK.map(q => q.section||'未分類'))];
   el.querySelector('.s-sections').innerHTML = secs.map(s => `
     <label class="chip"><input type="checkbox" value="${escapeHtmlAttr(s)}" checked> ${escapeHtml(s)}</label>
   `).join('');
 
   el.querySelector('.s-start').onclick = () => start(el);
-  el.querySelector('.s-reset').onclick = () => mountStudent(selector); 
+  el.querySelector('.s-reset').onclick = () => mountStudent(selector);
   el.querySelector('.s-prev').onclick = () => { if(state.idx>0){ state.idx--; render(el); } };
-  el.querySelector('.s-next').onclick = () => { 
+  el.querySelector('.s-next').onclick = () => {
     if(state.idx < state.paper.length-1){ state.idx++; render(el); }
     else { showReport(el); }
   };
@@ -365,18 +310,18 @@ function start(root){
   const mode = root.querySelector('.s-mode').value;
   const wantStr = root.querySelector('.s-count').value;
   const chosen = [...root.querySelectorAll('.s-sections input:checked')].map(i=>i.value);
-  
+
   if(!chosen.length) return alert('請至少勾選一個章節');
-  
+
   const poolIdx = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類')).map(x=>x.i);
   if(!poolIdx.length) return alert('所選章節目前沒有題目');
-  
+
   let list = (mode==='shuffle') ? shuffle(poolIdx) : poolIdx;
   const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
-  
+
   st.paper = list.slice(0, want);
   st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
-  
+
   root.querySelector('.s-finish').disabled = false;
   root.querySelector('.s-nav').classList.remove('hidden');
   render(root);
@@ -386,28 +331,28 @@ function render(root){
   const st = root._state;
   const pi = st.paper[st.idx];
   const q = BANK[pi];
-  
+
   root.querySelector('.s-progress').textContent = `${st.idx+1}/${st.paper.length}`;
   root.querySelector('.s-right').textContent = st.right;
   root.querySelector('.s-q').textContent = q.question;
-  
+
   const box = root.querySelector('.s-optBox');
   box.innerHTML = '';
   const correct = normalize(q.answer);
   const isMulti = correct.length > 1;
   const cur = normalize(st.user[pi]);
-  
+
   (q.options||[]).forEach((opt, i) => {
-    const row = document.createElement('label'); 
+    const row = document.createElement('label');
     row.className = 'opt';
-    const ip = document.createElement('input'); 
+    const ip = document.createElement('input');
     ip.type = isMulti ? 'checkbox' : 'radio';
     ip.name = 'q_opt';
     ip.checked = cur.includes(i);
-    
+
     row.onclick = (e) => {
       if(e.target !== ip) ip.checked = !ip.checked;
-      
+
       let now = new Set(normalize(st.user[pi]));
       if(isMulti){
         if(ip.checked) now.add(i); else now.delete(i);
@@ -416,7 +361,7 @@ function render(root){
         box.querySelectorAll('input').forEach((inp, idx) => { if(idx!==i) inp.checked=false; });
       }
       st.user[pi] = [...now].sort((a,b)=>a-b);
-      
+
       const uAns = st.user[pi];
       const right = same(uAns, q.answer);
       if(!isMulti || uAns.length >= correct.length){
@@ -428,7 +373,7 @@ function render(root){
     row.append(ip, document.createTextNode(" " + opt));
     box.append(row);
   });
-  
+
   refreshUI(root, q, pi);
 }
 
@@ -438,19 +383,19 @@ function refreshUI(root, q, pi){
   const uAns = normalize(st.user[pi]);
   const correct = normalize(q.answer);
   const ok = same(uAns, q.answer);
-  
+
   const fb = root.querySelector('.s-fb');
   if(isRev){
     fb.classList.remove('hidden');
     fb.className = `feedback s-fb ${ok?'ok':'bad'}`;
-    
+
     root.querySelector('.s-fbTitle').textContent = ok ? '答對了 ✅' : '答錯了 ❌';
-    
+
     const ansText = correct.map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
     root.querySelector('.s-fbAns').textContent = '正確答案：' + ansText;
-    
+
     root.querySelector('.s-fbExp').textContent = q.explanation ? '解析：' + q.explanation : '';
-    
+
     root.querySelectorAll('.opt').forEach((row, i) => {
       row.classList.remove('correct','wrong');
       if(correct.includes(i)) row.classList.add('correct');
@@ -466,7 +411,7 @@ function showReport(root){
   const box = root.querySelector('.s-report');
   box.classList.remove('hidden');
   const wrongList = st.paper.filter(pi => !same(st.user[pi], BANK[pi].answer));
-  
+
   box.innerHTML = `
     <h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
     <div style="margin-bottom:15px; font-size:18px;">
