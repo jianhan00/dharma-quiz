@@ -84,6 +84,8 @@ mark{padding:0 2px;border-radius:4px}
 
       <button id="searchBtn" class="btn brand">搜尋</button>
       <button id="searchClearBtn" class="btn ghost">清除</button>
+      <!-- ✅ 你要的按鈕：用搜尋命中的題目組卷（可跨章） -->
+      <button id="searchPracticeBtn" class="btn brand" style="display:none;">用搜尋結果開始練習</button>
     </div>
 
     <div class="row" style="margin-top:10px;">
@@ -106,6 +108,7 @@ function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0
 
 let BANK = [];
 let SECTIONS = [];
+let LAST_HITS = []; // ✅ 記住搜尋命中的題號，供「用搜尋結果開始練習」
 
 async function init(){
   try {
@@ -145,6 +148,8 @@ function initSearchUI(){
   // 綁定事件
   $('#searchBtn').onclick = () => doSearch();
   $('#searchClearBtn').onclick = () => clearSearch();
+  $('#searchPracticeBtn').onclick = () => startPracticeFromHitList();
+
   $('#searchInput').addEventListener('keydown', (e) => {
     if(e.key === 'Enter'){ doSearch(); }
   });
@@ -154,6 +159,8 @@ function clearSearch(){
   $('#searchInput').value = '';
   $('#searchResults').innerHTML = '';
   $('#searchInfo').textContent = '提示：支援跨章節搜尋；也可用下拉選單只搜單一章。';
+  LAST_HITS = [];
+  $('#searchPracticeBtn').style.display = 'none';
 }
 
 function doSearch(){
@@ -163,6 +170,8 @@ function doSearch(){
   if(!kwRaw){
     $('#searchInfo').textContent = '請先輸入關鍵字。';
     $('#searchResults').innerHTML = '';
+    LAST_HITS = [];
+    $('#searchPracticeBtn').style.display = 'none';
     return;
   }
 
@@ -187,6 +196,13 @@ function doSearch(){
   }
 
   $('#searchInfo').textContent = `找到 ${hits.length} 題（範圍：${scope==='__all__'?'全部章節':scope}）`;
+
+  // ✅ 記住命中的題號（供「用搜尋結果開始練習」）
+  LAST_HITS = hits.map(x => x.idx);
+
+  // ✅ 顯示/隱藏「用搜尋結果開始練習」按鈕
+  const pb = $('#searchPracticeBtn');
+  pb.style.display = (LAST_HITS.length > 0) ? '' : 'none';
 
   // 顯示結果（先顯示前 100 題，避免太長）
   const show = hits.slice(0, 100);
@@ -218,21 +234,47 @@ function renderHit(idx, q, kwRaw){
       <div class="resultSmall"><b>選項：</b>${options || '（無）'}</div>
       <div class="resultSmall"><b>解析：</b>${exp}</div>
       <div class="row" style="margin-top:12px;">
-        <button class="btn brand" data-action="startFrom" data-qi="${idx}">用這題開始刷題</button>
+        <button class="btn brand" data-action="startFrom" data-qi="${idx}">用這題開始刷題（同章節）</button>
       </div>
     </div>
   `;
 }
 
+/* ✅ 新增：把「搜尋命中題目」直接組成練習卷（可跨章） */
+function startPracticeFromHitList(){
+  if(!LAST_HITS || LAST_HITS.length === 0){
+    alert('目前沒有搜尋結果可練習，請先搜尋。');
+    return;
+  }
+
+  const root = $('#panel-student');
+  if(!root._state){
+    mountStudent('#panel-student');
+  }
+
+  const st = root._state;
+
+  // 直接用命中題號當練習卷（可跨章）
+  st.paper = [...LAST_HITS];
+  st.idx = 0;
+  st.right = 0;
+  st.user = {};
+  st.revealed = {};
+  st.firstScored = {};
+
+  root.querySelector('.s-finish').disabled = false;
+  root.querySelector('.s-nav').classList.remove('hidden');
+  render(root);
+
+  root.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* 保留：用單題定位進刷題區（同章節） */
 function startPracticeFromQuestionIndex(qi){
-  // 讓刷題區用「同章節」建立一份 paper，並定位到該題
   const sec = (BANK[qi].section || '未分類');
 
   const root = $('#panel-student');
-  const st = root._state;
-
-  // 如果刷題區尚未掛上 state（極少數情況），先重掛
-  if(!st){
+  if(!root._state){
     mountStudent('#panel-student');
   }
 
@@ -464,7 +506,6 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 function escapeHtmlAttr(s){
-  // attr 也用同樣轉義就夠用
   return escapeHtml(s);
 }
 function highlight(htmlEscapedText, kwRaw){
