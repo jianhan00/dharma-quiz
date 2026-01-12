@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<!-- ✅ Safari / iOS 強快取修正：只新增，不改動其他內容 -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
@@ -15,8 +13,8 @@
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink)}
 .wrap{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:18px}
 h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);font-size:13px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button,select,input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px}
-button,select{cursor:pointer}
+button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px;cursor:pointer}
+input[type="text"]{cursor:text; width: 220px;}
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
 .badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;margin-right:8px}.hr{height:1px;background:var(--line);margin:14px 0}
 .question{font-size:22px;line-height:1.7;margin:8px 0 10px}
@@ -26,24 +24,11 @@ button,select{cursor:pointer}
 .feedback{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:17px;background:#f8fafc}
 .feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
 .nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
+.chips{display:flex;gap:10px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
 .chip input{width:18px;height:18px;cursor:pointer}
 .report{margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px}
 .hidden{display:none}
-
-/* ✅ 搜尋結果樣式（新增） */
-.searchBox{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px}
-.searchRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.searchHint{color:var(--muted);font-size:13px;margin-top:6px}
-.resultItem{border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;background:#fff}
-.resultHead{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
-.kbd{font-size:12px;border:1px solid var(--line);background:#f8fafc;border-radius:8px;padding:2px 8px;color:var(--muted)}
-.resultQ{font-size:18px;line-height:1.7;margin:6px 0}
-.resultOpt{margin:6px 0 0 0;padding-left:18px}
-.resultOpt li{margin:4px 0}
-.resultAns{margin-top:8px}
-@media(max-width:600px){h1{font-size:24px}.question{font-size:20px}.opt{font-size:17px}}
+@media(max-width:600px){h1{font-size:24px}.question{font-size:20px}.opt{font-size:17px} input[type="text"]{width:100%;}}
 </style>
 </head>
 <body>
@@ -61,45 +46,10 @@ function normalize(a){ if(a==null) return []; return isArray(a)? [...a].sort((x,
 function same(a,b){ a=normalize(a); b=normalize(b); return a.length===b.length && a.every((v,i)=>v===b[i]); }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
 
-/* ✅ 新增：安全輸出（避免題庫文字含 < > 造成 HTML 注入） */
-function esc(s){
-  return String(s ?? '')
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'","&#39;");
-}
-
-function getAnswerText(q){
-  const correct = normalize(q.answer);
-  const fallback = ['A','B','C','D','E','F','G','H'];
-  return correct.map(i => (q.options && q.options[i]!=null) ? q.options[i] : (fallback[i] ?? String(i+1))).join(', ');
-}
-
-/* ✅ 新增：關鍵字比對（多關鍵字 AND；同時比對 題目/選項/解析/章節） */
-function makeSearchText(q){
-  const parts = [];
-  parts.push(q.section || '未分類');
-  parts.push(q.question || '');
-  if(Array.isArray(q.options)) parts.push(q.options.join(' '));
-  parts.push(q.explanation || '');
-  return parts.join(' ').toLowerCase();
-}
-function splitKeywords(raw){
-  return String(raw||'').trim().split(/\s+/).filter(Boolean).map(x=>x.toLowerCase());
-}
-function matchKeywords(q, keywords){
-  if(!keywords.length) return true;
-  const hay = makeSearchText(q);
-  return keywords.every(k => hay.includes(k));
-}
-
 let BANK = [];
 
 async function init(){
   try {
-    // ✅ Safari / iOS 強快取修正：只在 fetch 加上 cache: 'no-store'，其餘不動
     const r = await fetch('questions.json?t=' + new Date().getTime(), { cache: 'no-store' });
     if(!r.ok) throw new Error('讀取失敗');
     BANK = await r.json();
@@ -111,177 +61,150 @@ async function init(){
 
 function mountStudent(selector){
   const el = $(selector);
+  // HTML 結構調整：
+  // 1. 新增關鍵字輸入框
+  // 2. 題數預設改為 all
   el.innerHTML=`
     <div class="row">
       <div class="badge">共 <b class="s-total">${BANK.length}</b> 題</div>
       <div class="badge">目前：<b class="s-progress">0/0</b></div>
       <div class="badge">已答對：<b class="s-right">0</b></div>
     </div>
-
-    <!-- ✅ 新增：關鍵字搜尋區 -->
-    <div class="hr"></div>
-    <div class="searchBox">
-      <div style="font-size:16px;font-weight:bold;margin-bottom:8px">關鍵字搜尋</div>
-      <div class="searchRow">
-        <label>搜尋章節</label>
-        <select class="k-scope">
-          <option value="all" selected>全部章節</option>
-          <option value="picked">只搜尋勾選章節</option>
-        </select>
-        <input class="k-key" style="flex:1;min-width:240px" placeholder="輸入關鍵字（多個以空白分隔，採 AND）" />
-        <button class="btn brand k-do">搜尋</button>
-        <button class="btn ghost k-clear">清空</button>
-      </div>
-      <div class="searchHint">提示：可用多關鍵字，例如：<span class="kbd">無常 緣起</span>；會同時比對題目、選項、解析與章節。</div>
-
-      <div class="hr"></div>
-      <div class="row">
-        <div class="badge">命中：<b class="k-hit">0</b> 題</div>
-        <button class="btn brand k-start" disabled>用搜尋結果開始練習</button>
-      </div>
-      <div class="k-results" style="margin-top:10px"></div>
-    </div>
-
+    
     <div class="hr"></div>
 
-    <div class="row" style="margin-top:10px">
-      <div style="font-size:16px;font-weight:bold">章節：</div>
+    <div class="row">
+      <div style="font-size:16px;font-weight:bold">1. 選擇章節：</div>
       <div class="chips s-sections"></div>
     </div>
+
+    <div class="row" style="margin-top:10px">
+      <div style="font-size:16px;font-weight:bold">2. 關鍵字搜尋：</div>
+      <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或解析)...">
+    </div>
+
     <div class="hr"></div>
+
     <div class="row">
       <label>模式</label>
       <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
+      
       <label>題數</label>
-      <select class="s-count"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select>
+      <select class="s-count">
+        <option value="all" selected>全部</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+      
       <button class="btn brand s-start">開始作答</button>
       <button class="btn ghost s-reset">重置</button>
       <button class="btn ghost s-finish" disabled>完成並看成績</button>
     </div>
+
     <div class="hr"></div>
-    <div class="question s-q">請選擇章節與題數後，按「開始作答」</div>
+    <div class="question s-q">請選擇條件後，按「開始作答」</div>
     <div class="s-optBox"></div>
+    
     <div class="feedback s-fb hidden">
       <div class="s-fbTitle" style="font-weight:bold"></div>
       <div class="s-fbAns"></div>
       <div class="s-fbExp"></div>
     </div>
+    
     <div class="nav hidden s-nav">
       <button class="btn s-prev">← 上一題</button>
       <button class="btn s-next">下一題 →</button>
     </div>
     <div class="report hidden s-report"></div>
   `;
-
-  const state = {
-    paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{},
-    /* ✅ 新增：搜尋結果題單（存 BANK 的索引） */
-    searchPaper:[]
-  };
+  
+  const state = {paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}};
   el._state = state;
-
+  
   const secs = [...new Set(BANK.map(q => q.section||'未分類'))];
   el.querySelector('.s-sections').innerHTML = secs.map(s => `
-    <label class="chip"><input type="checkbox" value="${esc(s)}" checked> ${esc(s)}</label>
+    <label class="chip"><input type="checkbox" value="${s}" checked> ${s}</label>
   `).join('');
 
   el.querySelector('.s-start').onclick = () => start(el);
-  el.querySelector('.s-reset').onclick = () => mountStudent(selector);
+  el.querySelector('.s-reset').onclick = () => mountStudent(selector); 
   el.querySelector('.s-prev').onclick = () => { if(state.idx>0){ state.idx--; render(el); } };
-  el.querySelector('.s-next').onclick = () => {
+  el.querySelector('.s-next').onclick = () => { 
     if(state.idx < state.paper.length-1){ state.idx++; render(el); }
     else { showReport(el); }
   };
   el.querySelector('.s-finish').onclick = () => showReport(el);
-
-  /* ✅ 新增：搜尋事件 */
-  const keyInput = el.querySelector('.k-key');
-  el.querySelector('.k-do').onclick = () => doSearch(el);
-  el.querySelector('.k-clear').onclick = () => clearSearch(el);
-  el.querySelector('.k-start').onclick = () => startFromSearch(el);
-  keyInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') doSearch(el); });
-
-  // 初始：不顯示任何結果
-  renderSearchResults(el, []);
 }
 
 function start(root){
   const st = root._state;
   const mode = root.querySelector('.s-mode').value;
   const wantStr = root.querySelector('.s-count').value;
+  const keyword = root.querySelector('.s-keyword').value.trim().toLowerCase(); // 取得關鍵字並轉小寫
   const chosen = [...root.querySelectorAll('.s-sections input:checked')].map(i=>i.value);
-
+  
   if(!chosen.length) return alert('請至少勾選一個章節');
+  
+  // 1. 先篩選章節
+  let pool = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類'));
 
-  const poolIdx = BANK.map((q,i)=>({q,i}))
-    .filter(x => chosen.includes(x.q.section||'未分類'))
-    .map(x=>x.i);
+  // 2. 再篩選關鍵字 (搜尋 題目 和 解析)
+  if(keyword) {
+    pool = pool.filter(item => {
+      const qText = (item.q.question || "").toLowerCase();
+      const expText = (item.q.explanation || "").toLowerCase();
+      return qText.includes(keyword) || expText.includes(keyword);
+    });
+  }
 
-  if(!poolIdx.length) return alert('所選章節目前沒有題目');
+  const poolIdx = pool.map(x=>x.i);
 
+  if(!poolIdx.length) {
+    if(keyword) return alert(`在選定的章節中，找不到包含「${keyword}」的題目。`);
+    return alert('所選章節目前沒有題目');
+  }
+  
+  // 3. 處理順序或隨機
   let list = (mode==='shuffle') ? shuffle(poolIdx) : poolIdx;
+  
+  // 4. 處理題數限制
   const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
-
+  
   st.paper = list.slice(0, want);
   st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
-
+  
   root.querySelector('.s-finish').disabled = false;
   root.querySelector('.s-nav').classList.remove('hidden');
-  render(root);
-}
-
-/* ✅ 新增：用搜尋結果開始練習（題單 = 搜尋命中的題目） */
-function startFromSearch(root){
-  const st = root._state;
-  if(!st.searchPaper || !st.searchPaper.length) return alert('目前沒有搜尋結果，請先搜尋。');
-
-  const mode = root.querySelector('.s-mode').value;
-  const wantStr = root.querySelector('.s-count').value;
-
-  let list = (mode==='shuffle') ? shuffle(st.searchPaper) : st.searchPaper.slice();
-  const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
-
-  st.paper = list.slice(0, want);
-  st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
-
-  root.querySelector('.s-finish').disabled = false;
-  root.querySelector('.s-nav').classList.remove('hidden');
-  // 捲到作答區
-  root.querySelector('.s-q').scrollIntoView({behavior:'smooth', block:'start'});
   render(root);
 }
 
 function render(root){
   const st = root._state;
-  if(!st.paper.length){
-    root.querySelector('.s-progress').textContent = `0/0`;
-    root.querySelector('.s-right').textContent = st.right;
-    return;
-  }
   const pi = st.paper[st.idx];
   const q = BANK[pi];
-
+  
   root.querySelector('.s-progress').textContent = `${st.idx+1}/${st.paper.length}`;
   root.querySelector('.s-right').textContent = st.right;
   root.querySelector('.s-q').textContent = q.question;
-
+  
   const box = root.querySelector('.s-optBox');
   box.innerHTML = '';
   const correct = normalize(q.answer);
   const isMulti = correct.length > 1;
   const cur = normalize(st.user[pi]);
-
+  
   (q.options||[]).forEach((opt, i) => {
-    const row = document.createElement('label');
+    const row = document.createElement('label'); 
     row.className = 'opt';
-    const ip = document.createElement('input');
+    const ip = document.createElement('input'); 
     ip.type = isMulti ? 'checkbox' : 'radio';
     ip.name = 'q_opt';
     ip.checked = cur.includes(i);
-
+    
     row.onclick = (e) => {
       if(e.target !== ip) ip.checked = !ip.checked;
-
+      
       let now = new Set(normalize(st.user[pi]));
       if(isMulti){
         if(ip.checked) now.add(i); else now.delete(i);
@@ -290,7 +213,7 @@ function render(root){
         box.querySelectorAll('input').forEach((inp, idx) => { if(idx!==i) inp.checked=false; });
       }
       st.user[pi] = [...now].sort((a,b)=>a-b);
-
+      
       const uAns = st.user[pi];
       const right = same(uAns, q.answer);
       if(!isMulti || uAns.length >= correct.length){
@@ -302,7 +225,7 @@ function render(root){
     row.append(ip, document.createTextNode(" " + opt));
     box.append(row);
   });
-
+  
   refreshUI(root, q, pi);
 }
 
@@ -312,19 +235,19 @@ function refreshUI(root, q, pi){
   const uAns = normalize(st.user[pi]);
   const correct = normalize(q.answer);
   const ok = same(uAns, q.answer);
-
+  
   const fb = root.querySelector('.s-fb');
   if(isRev){
     fb.classList.remove('hidden');
     fb.className = `feedback s-fb ${ok?'ok':'bad'}`;
-
+    
     root.querySelector('.s-fbTitle').textContent = ok ? '答對了 ✅' : '答錯了 ❌';
-
+    
     const ansText = correct.map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
     root.querySelector('.s-fbAns').textContent = '正確答案：' + ansText;
-
+    
     root.querySelector('.s-fbExp').textContent = q.explanation ? '解析：' + q.explanation : '';
-
+    
     root.querySelectorAll('.opt').forEach((row, i) => {
       row.classList.remove('correct','wrong');
       if(correct.includes(i)) row.classList.add('correct');
@@ -340,22 +263,22 @@ function showReport(root){
   const box = root.querySelector('.s-report');
   box.classList.remove('hidden');
   const wrongList = st.paper.filter(pi => !same(st.user[pi], BANK[pi].answer));
-
+  
   box.innerHTML = `
     <h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
     <div style="margin-bottom:15px; font-size:16px;">
        <span class="chip">答對：${st.right} / ${st.paper.length}</span>
-       <span class="chip">正確率：${Math.round(st.right/st.paper.length*100)}%</span>
+       <span class="chip">正確率：${st.paper.length > 0 ? Math.round(st.right/st.paper.length*100) : 0}%</span>
     </div>
-    ${wrongList.length===0 ? '<p style="font-size:18px; color:#16a34a">全對！太棒了 🎉</p>' :
+    ${wrongList.length===0 ? '<p style="font-size:18px; color:#16a34a">全對！太棒了 🎉</p>' : 
       `<details open><summary>錯題清單 (${wrongList.length})</summary>
        <ul>${wrongList.map(pi => {
          const q = BANK[pi];
          const ansText = normalize(q.answer).map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
          return `<li>
-            <b>${esc(q.question)}</b><br>
-            <span style="color:#16a34a">正解：${esc(ansText)}</span><br>
-            <span class="sub">解析：${esc(q.explanation||'無')}</span>
+            <b>${q.question}</b><br>
+            <span style="color:#16a34a">正解：${ansText}</span><br>
+            <span class="sub">解析：${q.explanation||'無'}</span>
          </li>`;
        }).join('')}</ul></details>`
     }
@@ -365,87 +288,8 @@ function showReport(root){
   `;
   root.querySelector('.s-nav').classList.add('hidden');
   root.querySelector('.s-optBox').innerHTML = '';
-  root.querySelector('.s-q').textContent = '';
+  root.querySelector('.s-q').textContent = ''; 
 }
-
-/* =========================
-   ✅ 新增：搜尋功能實作
-========================= */
-function getChosenSections(root){
-  return [...root.querySelectorAll('.s-sections input:checked')].map(i=>i.value);
-}
-
-function doSearch(root){
-  const st = root._state;
-  const scope = root.querySelector('.k-scope').value; // all | picked
-  const raw = root.querySelector('.k-key').value;
-  const keywords = splitKeywords(raw);
-
-  if(!keywords.length){
-    alert('請輸入至少一個關鍵字');
-    return;
-  }
-
-  const chosen = getChosenSections(root);
-  const pool = BANK.map((q,i)=>({q,i}))
-    .filter(x => scope==='all' ? true : chosen.includes(x.q.section||'未分類'))
-    .filter(x => matchKeywords(x.q, keywords))
-    .map(x => x.i);
-
-  st.searchPaper = pool;
-  root.querySelector('.k-hit').textContent = pool.length;
-  root.querySelector('.k-start').disabled = pool.length===0;
-
-  renderSearchResults(root, pool, keywords);
-}
-
-function clearSearch(root){
-  const st = root._state;
-  st.searchPaper = [];
-  root.querySelector('.k-key').value = '';
-  root.querySelector('.k-hit').textContent = '0';
-  root.querySelector('.k-start').disabled = true;
-  renderSearchResults(root, []);
-}
-
-function renderSearchResults(root, idxList, keywords=[]){
-  const box = root.querySelector('.k-results');
-  if(!idxList || !idxList.length){
-    box.innerHTML = `<div class="sub">尚無搜尋結果。</div>`;
-    return;
-  }
-
-  const kwText = keywords.length ? `（關鍵字：${keywords.map(esc).join(' ') }）` : '';
-  box.innerHTML = `
-    <div class="sub">共 ${idxList.length} 題命中 ${kwText}</div>
-    ${idxList.map((pi, n) => {
-      const q = BANK[pi];
-      const section = q.section || '未分類';
-      const ansText = getAnswerText(q);
-      const opts = Array.isArray(q.options) ? q.options : [];
-      return `
-        <div class="resultItem">
-          <div class="resultHead">
-            <span class="chip" style="background:#f1f5f9">${esc(section)}</span>
-            <span class="kbd">#${n+1}</span>
-          </div>
-          <div class="resultQ"><b>題目：</b>${esc(q.question)}</div>
-
-          <div>
-            <b>選項：</b>
-            ${opts.length ? `<ol class="resultOpt">${opts.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>` : `<div class="sub">（無選項）</div>`}
-          </div>
-
-          <div class="resultAns">
-            <div><b>答案：</b><span style="color:#16a34a">${esc(ansText)}</span></div>
-            <div><b>解析：</b>${esc(q.explanation || '無')}</div>
-          </div>
-        </div>
-      `;
-    }).join('')}
-  `;
-}
-
 init();
 </script>
 </body>
