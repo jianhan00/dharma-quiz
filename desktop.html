@@ -3,40 +3,98 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 <!-- ✅ Safari / iOS 強快取修正：只新增，不改動其他內容 -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
-<title>線上刷題小程序</title>
+<title>線上刷題小程序（桌機版含搜尋）</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink)}
-.wrap{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:18px}
-h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);font-size:13px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button,select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px;cursor:pointer}
-.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
-.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;margin-right:8px}.hr{height:1px;background:var(--line);margin:14px 0}
-.question{font-size:22px;line-height:1.7;margin:8px 0 10px}
-.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:4px 0;font-size:18px;background:#fff;cursor:pointer}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:18px}
+h1{margin:0 0 8px;font-size:40px}
+.sub{color:var(--muted);font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+button,select{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;color:var(--ink);font-size:18px;cursor:pointer}
+.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.ghost{background:#fff}
+
+.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:18px;margin-right:8px}
+.hr{height:1px;background:var(--line);margin:14px 0}
+
+.question{font-size:32px;line-height:1.7;margin:8px 0 10px}
+.opt{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px 12px;margin:8px 0;font-size:26px;background:#fff;cursor:pointer}
+.opt input{transform:scale(1.2);margin-top:4px}
 .opt:hover{background:#f8fafc}
-.opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
-.feedback{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:17px;background:#f8fafc}
+.opt.correct{border-color:var(--ok);background:#f0fdf4}
+.opt.wrong{border-color:var(--bad);background:#fef2f2}
+
+.feedback{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:20px;background:#f8fafc}
 .feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
 .nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.chips{display:flex;gap:10px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
-.chip input{width:18px;height:18px;cursor:pointer}
+
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:18px;cursor:pointer}
+.chip input{width:20px;height:20px;cursor:pointer}
+
 .report{margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px}
 .hidden{display:none}
+
+/* 搜尋區 */
+.searchBox{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px}
+.searchInput{
+  flex:1; min-width:320px;
+  font-size:20px; padding:12px 14px;
+  border:1px solid var(--line); border-radius:10px;
+}
+.searchInfo{font-size:14px;color:var(--muted)}
+.searchResults{margin-top:14px}
+.resultItem{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
+  background:#fff;
+}
+.resultQ{font-size:22px;font-weight:700;line-height:1.6}
+.resultMeta{margin-top:6px;color:var(--muted);font-size:14px}
+.resultSmall{margin-top:8px;font-size:18px;line-height:1.7}
+mark{padding:0 2px;border-radius:4px}
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>線上刷題小程序 <span class="sub">— 雲端版</span></h1>
+    <h1>線上刷題小程序 <span class="sub">— 桌機版（含關鍵字搜尋）</span></h1>
   </div>
-  <div class="card" id="panel-student">載入題庫中...</div>
+
+  <!-- ✅ 搜尋區（桌機版新增，不影響原刷題流程） -->
+  <div class="card searchBox" id="search-card" style="margin-top:14px; display:none;">
+    <div class="row" style="align-items:stretch;">
+      <div style="font-size:18px;font-weight:700; padding-top:10px;">搜尋：</div>
+
+      <select id="searchScope" style="min-width:220px;"></select>
+
+      <input id="searchInput" class="searchInput" type="text" placeholder="輸入關鍵字（題目／選項／解析）" />
+
+      <button id="searchBtn" class="btn brand">搜尋</button>
+      <button id="searchClearBtn" class="btn ghost">清除</button>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <span class="searchInfo" id="searchInfo">提示：支援跨章節搜尋；也可用下拉選單只搜單一章。</span>
+    </div>
+
+    <div class="searchResults" id="searchResults"></div>
+  </div>
+
+  <!-- 原本刷題區（維持） -->
+  <div class="card" id="panel-student" style="margin-top:14px;">載入題庫中...</div>
 </div>
 
 <script>
@@ -47,6 +105,7 @@ function same(a,b){ a=normalize(a); b=normalize(b); return a.length===b.length &
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
 
 let BANK = [];
+let SECTIONS = [];
 
 async function init(){
   try {
@@ -54,12 +113,156 @@ async function init(){
     const r = await fetch('questions.json?t=' + new Date().getTime(), { cache: 'no-store' });
     if(!r.ok) throw new Error('讀取失敗');
     BANK = await r.json();
+
+    // 章節清單
+    SECTIONS = [...new Set(BANK.map(q => q.section || '未分類'))];
+
+    // ✅ 先掛上刷題
     mountStudent('#panel-student');
+
+    // ✅ 再啟用搜尋（不影響刷題）
+    initSearchUI();
+
   } catch(e) {
     $('#panel-student').innerHTML = `<p style="color:red">無法讀取題庫，請確認 questions.json 是否已上傳。</p>`;
   }
 }
 
+/* =========================
+   搜尋功能（跨章 / 單章）
+========================= */
+function initSearchUI(){
+  // 顯示搜尋卡片
+  $('#search-card').style.display = '';
+
+  // 填入下拉：全部章節 + 各章
+  const sel = $('#searchScope');
+  sel.innerHTML = `
+    <option value="__all__" selected>全部章節（跨章）</option>
+    ${SECTIONS.map(s => `<option value="${escapeHtmlAttr(s)}">只搜：${escapeHtml(s)}</option>`).join('')}
+  `;
+
+  // 綁定事件
+  $('#searchBtn').onclick = () => doSearch();
+  $('#searchClearBtn').onclick = () => clearSearch();
+  $('#searchInput').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ doSearch(); }
+  });
+}
+
+function clearSearch(){
+  $('#searchInput').value = '';
+  $('#searchResults').innerHTML = '';
+  $('#searchInfo').textContent = '提示：支援跨章節搜尋；也可用下拉選單只搜單一章。';
+}
+
+function doSearch(){
+  const kwRaw = ($('#searchInput').value || '').trim();
+  const scope = $('#searchScope').value;
+
+  if(!kwRaw){
+    $('#searchInfo').textContent = '請先輸入關鍵字。';
+    $('#searchResults').innerHTML = '';
+    return;
+  }
+
+  const kw = kwRaw.toLowerCase();
+
+  // 篩選題目：題幹/選項/解析 任一包含
+  const hits = [];
+  for(let i=0;i<BANK.length;i++){
+    const q = BANK[i];
+    const section = (q.section || '未分類');
+    if(scope !== '__all__' && section !== scope) continue;
+
+    const hay = [
+      q.question || '',
+      ...(q.options || []),
+      q.explanation || ''
+    ].join(' \n ').toLowerCase();
+
+    if(hay.includes(kw)){
+      hits.push({idx:i, q});
+    }
+  }
+
+  $('#searchInfo').textContent = `找到 ${hits.length} 題（範圍：${scope==='__all__'?'全部章節':scope}）`;
+
+  // 顯示結果（先顯示前 100 題，避免太長）
+  const show = hits.slice(0, 100);
+  $('#searchResults').innerHTML = show.length ? `
+    ${show.map(item => renderHit(item.idx, item.q, kwRaw)).join('')}
+    ${hits.length>100 ? `<div class="searchInfo">（結果超過 100 題，先顯示前 100 題）</div>` : ``}
+  ` : `<div class="searchInfo">沒有找到符合的題目。你可以換個關鍵字或改成「全部章節」。</div>`;
+
+  // 點「帶入刷題」按鈕時的事件委派
+  $('#searchResults').querySelectorAll('[data-action="startFrom"]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const qi = parseInt(e.currentTarget.getAttribute('data-qi'), 10);
+      startPracticeFromQuestionIndex(qi);
+    });
+  });
+}
+
+function renderHit(idx, q, kwRaw){
+  const section = escapeHtml(q.section || '未分類');
+  const question = highlight(escapeHtml(q.question || ''), kwRaw);
+  const optText = (q.options||[]).map((t, i)=>`${String.fromCharCode(65+i)}. ${t}`).join('　');
+  const options = highlight(escapeHtml(optText), kwRaw);
+  const exp = q.explanation ? highlight(escapeHtml(q.explanation), kwRaw) : '（無解析）';
+
+  return `
+    <div class="resultItem">
+      <div class="resultQ">${question}</div>
+      <div class="resultMeta">章節：${section}　｜　題號索引：${idx+1}</div>
+      <div class="resultSmall"><b>選項：</b>${options || '（無）'}</div>
+      <div class="resultSmall"><b>解析：</b>${exp}</div>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn brand" data-action="startFrom" data-qi="${idx}">用這題開始刷題</button>
+      </div>
+    </div>
+  `;
+}
+
+function startPracticeFromQuestionIndex(qi){
+  // 讓刷題區用「同章節」建立一份 paper，並定位到該題
+  const sec = (BANK[qi].section || '未分類');
+
+  const root = $('#panel-student');
+  const st = root._state;
+
+  // 如果刷題區尚未掛上 state（極少數情況），先重掛
+  if(!st){
+    mountStudent('#panel-student');
+  }
+
+  // 依照「同章節」建立 paper（順序）
+  const poolIdx = BANK.map((q,i)=>({q,i}))
+    .filter(x => (x.q.section||'未分類') === sec)
+    .map(x=>x.i);
+
+  // 定位到該題在同章 paper 的位置
+  const pos = poolIdx.indexOf(qi);
+
+  // 套用到刷題 state
+  const st2 = $('#panel-student')._state;
+  st2.paper = poolIdx;
+  st2.idx = Math.max(0, pos);
+  st2.right = 0; st2.user = {}; st2.revealed = {}; st2.firstScored = {};
+
+  // 讓 UI 進入作答狀態
+  $('#panel-student').querySelector('.s-finish').disabled = false;
+  $('#panel-student').querySelector('.s-nav').classList.remove('hidden');
+
+  render($('#panel-student'));
+
+  // 捲動到刷題區
+  $('#panel-student').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* =========================
+   原本刷題功能（維持）
+========================= */
 function mountStudent(selector){
   const el = $(selector);
   el.innerHTML=`
@@ -69,14 +272,14 @@ function mountStudent(selector){
       <div class="badge">已答對：<b class="s-right">0</b></div>
     </div>
     <div class="row" style="margin-top:10px">
-      <div style="font-size:16px;font-weight:bold">章節：</div>
+      <div style="font-size:18px;font-weight:bold">章節：</div>
       <div class="chips s-sections"></div>
     </div>
     <div class="hr"></div>
     <div class="row">
-      <label>模式</label>
+      <label style="font-size:18px">模式</label>
       <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
-      <label>題數</label>
+      <label style="font-size:18px">題數</label>
       <select class="s-count"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select>
       <button class="btn brand s-start">開始作答</button>
       <button class="btn ghost s-reset">重置</button>
@@ -102,7 +305,7 @@ function mountStudent(selector){
   
   const secs = [...new Set(BANK.map(q => q.section||'未分類'))];
   el.querySelector('.s-sections').innerHTML = secs.map(s => `
-    <label class="chip"><input type="checkbox" value="${s}" checked> ${s}</label>
+    <label class="chip"><input type="checkbox" value="${escapeHtmlAttr(s)}" checked> ${escapeHtml(s)}</label>
   `).join('');
 
   el.querySelector('.s-start').onclick = () => start(el);
@@ -224,19 +427,19 @@ function showReport(root){
   
   box.innerHTML = `
     <h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
-    <div style="margin-bottom:15px; font-size:16px;">
+    <div style="margin-bottom:15px; font-size:18px;">
        <span class="chip">答對：${st.right} / ${st.paper.length}</span>
        <span class="chip">正確率：${Math.round(st.right/st.paper.length*100)}%</span>
     </div>
-    ${wrongList.length===0 ? '<p style="font-size:18px; color:#16a34a">全對！太棒了 🎉</p>' : 
+    ${wrongList.length===0 ? '<p style="font-size:20px; color:#16a34a">全對！太棒了 🎉</p>' :
       `<details open><summary>錯題清單 (${wrongList.length})</summary>
        <ul>${wrongList.map(pi => {
          const q = BANK[pi];
          const ansText = normalize(q.answer).map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
-         return `<li>
-            <b>${q.question}</b><br>
-            <span style="color:#16a34a">正解：${ansText}</span><br>
-            <span class="sub">解析：${q.explanation||'無'}</span>
+         return `<li style="margin:10px 0">
+            <b style="font-size:18px">${escapeHtml(q.question||'')}</b><br>
+            <span style="color:#16a34a">正解：${escapeHtml(ansText)}</span><br>
+            <span class="sub">解析：${escapeHtml(q.explanation||'無')}</span>
          </li>`;
        }).join('')}</ul></details>`
     }
@@ -246,8 +449,34 @@ function showReport(root){
   `;
   root.querySelector('.s-nav').classList.add('hidden');
   root.querySelector('.s-optBox').innerHTML = '';
-  root.querySelector('.s-q').textContent = ''; 
+  root.querySelector('.s-q').textContent = '';
 }
+
+/* =========================
+   小工具：避免 XSS / 高亮
+========================= */
+function escapeHtml(s){
+  return String(s??'')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+function escapeHtmlAttr(s){
+  // attr 也用同樣轉義就夠用
+  return escapeHtml(s);
+}
+function highlight(htmlEscapedText, kwRaw){
+  if(!kwRaw) return htmlEscapedText;
+  const kw = escapeRegExp(kwRaw);
+  const re = new RegExp(kw, 'gi');
+  return htmlEscapedText.replace(re, (m)=>`<mark>${m}</mark>`);
+}
+function escapeRegExp(s){
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 init();
 </script>
 </body>
