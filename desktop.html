@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
-<title>關鍵字刷題小程序</title>
+<title>線上刷題小程序</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
@@ -15,10 +15,10 @@
 /* 1. 基礎字體 18px */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
 
-/* 離螢幕頂端設定為 24px */
+/* ✅ [修改1] 離螢幕頂端改為 24px */
 .wrap{max-width:1000px;margin:24px auto;padding:0 12px}
 
-/* ✅ [修改1] 卡片內距：上15px / 下10px (左右維持16px) */
+/* 卡片內距：上15px / 下10px (左右維持16px) */
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:15px 16px 10px 16px;}
 
 /* 標題邊距：下方 6px */
@@ -36,7 +36,7 @@ input[type="text"]{cursor:text; width: 240px;}
 /* 統計標籤 */
 .badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:18px;}
 
-/* ✅ [修改2] 分隔線上下間距：10px */
+/* 分隔線上下間距：10px */
 .hr{height:1px;background:var(--line);margin:10px 0}
 
 /* 3. 題目與選項 */
@@ -122,7 +122,7 @@ input[type="text"]{cursor:text; width: 240px;}
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>關鍵字刷題小程序 <span class="sub">— 雲端版</span></h1>
+    <h1>線上刷題小程序 <span class="sub">— 雲端版</span></h1>
   </div>
   <div class="card" id="panel-student">載入題庫中...</div>
 </div>
@@ -166,7 +166,7 @@ function mountStudent(selector){
 
     <div class="row" style="margin-top:8px">
       <div style="font-size:18px;font-weight:bold">2. 關鍵字搜尋：</div>
-      <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或解析)...">
+      <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或選項)...">
     </div>
 
     <div class="hr"></div>
@@ -243,11 +243,14 @@ function start(root){
   
   let pool = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類'));
 
+  // ✅ [修改3] 搜尋邏輯：只包含 題目 + 選項，移除解析
   if(keyword) {
     pool = pool.filter(item => {
       const qText = (item.q.question || "").toLowerCase();
-      const expText = (item.q.explanation || "").toLowerCase();
-      return qText.includes(keyword) || expText.includes(keyword);
+      // 將所有選項串接成字串來比對
+      const optsText = (item.q.options || []).join(" ").toLowerCase();
+      
+      return qText.includes(keyword) || optsText.includes(keyword);
     });
   }
 
