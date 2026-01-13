@@ -12,14 +12,14 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 全域基礎字體：從 18px 起跳 */
+/* 全域基礎字體 */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 19px;} 
 
 .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:24px}
 
 /* 標題 */
-h1{margin:0 0 12px;font-size:28px}.sub{color:var(--muted);font-size:16px}
+h1{margin:0 0 12px;font-size:32px}.sub{color:var(--muted);font-size:16px}
 
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 
@@ -34,15 +34,15 @@ input[type="text"]{cursor:text; width: 260px;}
 
 /* --- 重點修改：題目與選項 --- */
 
-/* 題目：預設 26px，行高寬鬆 */
-.question{font-size:26px; font-weight: normal; line-height:1.5; margin:18px 0 22px; color:#000;}
+/* 題目：已移除 font-weight: bold，改為 normal (一般粗細) */
+.question{font-size:28px; font-weight: normal; line-height:1.6; margin:20px 0 24px; color:#000;}
 
-/* 選項：預設 24px */
+/* 選項 */
 .opt{display:flex;align-items:flex-start;gap:14px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0;font-size:24px;background:#fff;cursor:pointer; transition: background 0.2s;}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
 
-/* 選項前的勾選框：放大 1.5 倍 */
+/* 選項前的勾選框 */
 .opt input { width: 26px; height: 26px; margin-top: 6px; cursor: pointer; flex-shrink: 0; }
 
 .feedback{margin-top:20px;border:1px solid var(--line);border-radius:14px;padding:20px;font-size:20px;background:#f8fafc; line-height: 1.6;}
@@ -58,29 +58,22 @@ input[type="text"]{cursor:text; width: 260px;}
 
 /* --- 手機版專屬調整 (螢幕寬度小於 600px) --- */
 @media(max-width:600px){
-  /* 手機版標題保持大尺寸 */
   h1{font-size:28px}
   
-  /* 手機版題目：強制維持 28px，不縮小 */
+  /* 手機版題目：維持 28px */
   .question{font-size:28px; margin: 16px 0 20px;} 
   
-  /* 手機版選項：維持 24px，不縮小 */
+  /* 手機版選項 */
   .opt{font-size:24px; padding: 14px 16px;}
   
-  /* 手機版輸入框與按鈕：全寬顯示，按鈕更大 */
   input[type="text"]{width:100%; font-size: 20px;}
   select { font-size: 20px; }
   
-  /* 模式與題數選單並排，但字體加大 */
   .s-mode, .s-count { width: 48%; } 
+  .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; padding: 16px; font-size: 22px; font-weight: normal; } /* 按鈕也不加粗了 */
   
-  /* 主要操作按鈕：全寬，增加高度 */
-  .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; padding: 16px; font-size: 22px; font-weight: bold; }
-  
-  /* 導航按鈕：全寬 */
   .nav button { flex: 1; padding: 16px; font-size: 20px; } 
 
-  /* 調整間距 */
   .wrap { padding: 0 12px; margin: 12px auto; }
   .card { padding: 18px; }
 }
