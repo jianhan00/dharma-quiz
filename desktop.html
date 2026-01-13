@@ -12,16 +12,21 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 1. 基礎字體：加大至 18px */
+/* 1. 基礎字體 18px */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
 
-.wrap{max-width:1000px;margin:24px auto;padding:0 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:20px}
+/* ✅ [修改1] 離螢幕頂端 22px */
+.wrap{max-width:1000px;margin:22px auto;padding:0 16px}
 
+/* ✅ [修改2] 卡片內距：上20px / 下16px (左右20px) */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:20px 20px 16px 20px;}
+
+/* ✅ [修改3] 標題邊距：下方 10px (配合卡片下方內距16px，總和26px) */
 h1{margin:0 0 10px;font-size:28px}.sub{color:var(--muted);font-size:14px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center} /* 間距稍微縮小以容納大字體 */
 
-/* 2. 元件樣式 (加大字體，但控制 Padding 避免過大) */
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* 2. 元件樣式 */
 button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:18px;cursor:pointer}
 input[type="text"]{cursor:text; width: 240px;}
 
@@ -32,7 +37,7 @@ input[type="text"]{cursor:text; width: 240px;}
 
 .hr{height:1px;background:var(--line);margin:16px 0}
 
-/* 3. 題目與選項 (配合手機版加大) */
+/* 3. 題目與選項 */
 .question{font-size:25px; line-height:1.5; margin:12px 0 16px; font-weight: normal; color: var(--ink);}
 .opt{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0;font-size:21px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
@@ -50,30 +55,29 @@ input[type="text"]{cursor:text; width: 240px;}
 .report{margin-top:16px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px}
 .hidden{display:none}
 
-/* ✅ 排版輔助 */
+/* 排版輔助 */
 .control-group { display: flex; gap: 10px; align-items: center; }
 .ctrl-item { display: flex; align-items: center; gap: 6px; }
-.btn-group { display: flex; gap: 10px; } /* 電腦版按鈕也是橫排 */
+.btn-group { display: flex; gap: 10px; } 
 
 /* 4. 手機版專屬設定 (寬度 < 600px) */
 @media(max-width:600px){
   h1{font-size:26px}
-  .question{font-size:24px} /* 題目大一點 */
-  .opt{font-size:20px} /* 選項大一點 */
+  .question{font-size:24px}
+  .opt{font-size:20px}
   
-  /* 輸入框全寬 */
   input[type="text"]{width:100%; font-size: 18px;}
   select { font-size: 18px; }
   
-  /* ✅ [修改1] 統計數據：Grid 佈局，強制一行 */
+  /* 統計數據：一行 */
   .stats-row {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px; /* 間距縮小 */
+    gap: 6px;
     width: 100%;
   }
   .stats-row .badge {
-    font-size: 15px; /* 字體適中，避免爆行 */
+    font-size: 15px;
     padding: 8px 2px;
     text-align: center;
     margin: 0;
@@ -83,36 +87,34 @@ input[type="text"]{cursor:text; width: 240px;}
     align-items: center;
   }
 
-  /* ✅ [修改2] 模式與題數：強制同一行 */
+  /* 模式與題數：一行 */
   .control-group {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    gap: 8px; /* 間距不要太大 */
+    gap: 8px;
   }
   .ctrl-item {
     flex: 1; 
-    flex-direction: row; /* 手機上維持橫向比較好看，或者 column 也可以 */
+    flex-direction: row; 
     align-items: center;
     justify-content: flex-start;
   }
-  /* 隱藏標籤文字 "模式/題數" 來省空間，或者縮小它 */
   .ctrl-item label { font-size: 15px; white-space: nowrap; }
   .ctrl-item select { width: 100%; }
 
-  /* ✅ [修改3] 按鈕群組：強制同一行，不換行 */
+  /* 按鈕群組：一行 */
   .btn-group {
     width: 100%;
     margin-top: 8px;
-    gap: 8px; /* 間距縮小 */
+    gap: 8px;
   }
   .s-start, .s-reset, .s-finish {
-    padding: 12px 4px; /* 上下高一點，左右窄一點 */
-    font-size: 17px; /* 按鈕字體太大會爆，設 17px 剛好 */
-    flex: 1; /* 平均分配寬度 */
-    white-space: nowrap; /* 禁止換行 */
+    padding: 12px 4px;
+    font-size: 17px;
+    flex: 1; 
+    white-space: nowrap; 
   }
-  /* 完成按鈕字比較多，稍微給多一點權重或縮字距 */
   .s-finish { flex: 1.2; letter-spacing: -0.5px; }
 }
 </style>
@@ -148,9 +150,6 @@ async function init(){
 function mountStudent(selector){
   const el = $(selector);
   
-  // HTML 結構調整：
-  // 1. .control-group 包裹下拉選單
-  // 2. .btn-group 包裹按鈕 (實現 IMG_1069 的佈局)
   el.innerHTML=`
     <div class="row stats-row">
       <div class="badge"><b class="s-total">${BANK.length}</b> 題</div>
