@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<!-- ✅ Safari / iOS 強快取修正：只新增，不改動其他內容 -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
@@ -12,24 +10,113 @@
 <title>線上刷題小程序</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink)}
-.wrap{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:18px}
-h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);font-size:13px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-button,select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px;cursor:pointer}
+*{box-sizing:border-box}
+
+/* 1. 基礎字體 18px */
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
+
+/* ✅ [修改1] 離螢幕頂端改為 24px */
+.wrap{max-width:1000px;margin:24px auto;padding:0 12px}
+
+/* 卡片內距：上15px / 下10px (左右維持16px) */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:15px 16px 10px 16px;}
+
+/* 標題邊距：下方 6px */
+h1{margin:0 0 6px;font-size:28px}.sub{color:var(--muted);font-size:14px}
+
+/* 行間距 */
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* 2. 元件樣式：內距 8px */
+button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink);font-size:18px;cursor:pointer}
+input[type="text"]{cursor:text; width: 240px;}
+
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
-.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;margin-right:8px}.hr{height:1px;background:var(--line);margin:14px 0}
-.question{font-size:22px;line-height:1.7;margin:8px 0 10px}
-.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:4px 0;font-size:18px;background:#fff;cursor:pointer}
+
+/* 統計標籤 */
+.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:18px;}
+
+/* 分隔線上下間距：10px */
+.hr{height:1px;background:var(--line);margin:10px 0}
+
+/* 3. 題目與選項 */
+.question{font-size:25px; line-height:1.4; margin:10px 0 12px; font-weight: normal; color: var(--ink);}
+.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:21px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
-.feedback{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:17px;background:#f8fafc}
+.opt input { width: 21px; height: 21px; margin-top: 5px; cursor: pointer; flex-shrink: 0; }
+
+.feedback{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:18px;background:#f8fafc}
 .feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
+
 .nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.chips{display:flex;gap:10px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:18px;cursor:pointer}
 .chip input{width:18px;height:18px;cursor:pointer}
-.report{margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px}
+
+.report{margin-top:12px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px}
 .hidden{display:none}
-@media(max-width:600px){h1{font-size:24px}.question{font-size:20px}.opt{font-size:17px}}
+
+/* 排版輔助 */
+.control-group { display: flex; gap: 8px; align-items: center; }
+.ctrl-item { display: flex; align-items: center; gap: 6px; }
+.btn-group { display: flex; gap: 8px; } 
+
+/* 4. 手機版專屬設定 (寬度 < 600px) */
+@media(max-width:600px){
+  h1{font-size:26px}
+  .question{font-size:24px}
+  .opt{font-size:20px}
+  
+  input[type="text"]{width:100%; font-size: 18px;}
+  select { font-size: 18px; }
+  
+  /* 統計數據：一行 */
+  .stats-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px; 
+    width: 100%;
+  }
+  .stats-row .badge {
+    font-size: 15px;
+    padding: 6px 2px;
+    text-align: center;
+    margin: 0;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .control-group {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .ctrl-item {
+    flex: 1; 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .ctrl-item label { font-size: 15px; white-space: nowrap; }
+  .ctrl-item select { width: 100%; }
+
+  .btn-group {
+    width: 100%;
+    margin-top: 6px;
+    gap: 6px;
+  }
+  .s-start, .s-reset, .s-finish {
+    padding: 10px 2px;
+    font-size: 17px;
+    flex: 1; 
+    white-space: nowrap; 
+  }
+  .s-finish { flex: 1.2; letter-spacing: -0.5px; }
+}
 </style>
 </head>
 <body>
@@ -51,7 +138,6 @@ let BANK = [];
 
 async function init(){
   try {
-    // ✅ Safari / iOS 強快取修正：只在 fetch 加上 cache: 'no-store'，其餘不動
     const r = await fetch('questions.json?t=' + new Date().getTime(), { cache: 'no-store' });
     if(!r.ok) throw new Error('讀取失敗');
     BANK = await r.json();
@@ -63,34 +149,64 @@ async function init(){
 
 function mountStudent(selector){
   const el = $(selector);
+  
   el.innerHTML=`
-    <div class="row">
-      <div class="badge">共 <b class="s-total">${BANK.length}</b> 題</div>
-      <div class="badge">目前：<b class="s-progress">0/0</b></div>
-      <div class="badge">已答對：<b class="s-right">0</b></div>
+    <div class="row stats-row">
+      <div class="badge"><b class="s-total">${BANK.length}</b> 題</div>
+      <div class="badge">目前 <b class="s-progress">0/0</b></div>
+      <div class="badge">答對 <b class="s-right">0</b></div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <div style="font-size:16px;font-weight:bold">章節：</div>
+    
+    <div class="hr"></div>
+
+    <div class="row">
+      <div style="font-size:18px;font-weight:bold">1. 選擇章節：</div>
       <div class="chips s-sections"></div>
     </div>
-    <div class="hr"></div>
-    <div class="row">
-      <label>模式</label>
-      <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
-      <label>題數</label>
-      <select class="s-count"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="all">全部</option></select>
-      <button class="btn brand s-start">開始作答</button>
-      <button class="btn ghost s-reset">重置</button>
-      <button class="btn ghost s-finish" disabled>完成並看成績</button>
+
+    <div class="row" style="margin-top:8px">
+      <div style="font-size:18px;font-weight:bold">2. 關鍵字搜尋：</div>
+      <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或選項)...">
     </div>
+
     <div class="hr"></div>
-    <div class="question s-q">請選擇章節與題數後，按「開始作答」</div>
+
+    <div class="row" style="flex-direction: column; align-items: stretch; gap: 8px;">
+      
+      <div class="control-group">
+        <div class="ctrl-item">
+          <label>模式</label>
+          <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
+        </div>
+        <div class="ctrl-item">
+          <label>題數</label>
+          <select class="s-count">
+            <option value="all" selected>全部</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn brand s-start">開始作答</button>
+        <button class="btn ghost s-reset">重置</button>
+        <button class="btn ghost s-finish" disabled>完成並看成績</button>
+      </div>
+
+    </div>
+
+    <div class="hr"></div>
+    <div class="question s-q">請選擇條件後，按「開始作答」</div>
     <div class="s-optBox"></div>
+    
     <div class="feedback s-fb hidden">
       <div class="s-fbTitle" style="font-weight:bold"></div>
       <div class="s-fbAns"></div>
       <div class="s-fbExp"></div>
     </div>
+    
     <div class="nav hidden s-nav">
       <button class="btn s-prev">← 上一題</button>
       <button class="btn s-next">下一題 →</button>
@@ -120,12 +236,30 @@ function start(root){
   const st = root._state;
   const mode = root.querySelector('.s-mode').value;
   const wantStr = root.querySelector('.s-count').value;
+  const keyword = root.querySelector('.s-keyword').value.trim().toLowerCase(); 
   const chosen = [...root.querySelectorAll('.s-sections input:checked')].map(i=>i.value);
   
   if(!chosen.length) return alert('請至少勾選一個章節');
   
-  const poolIdx = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類')).map(x=>x.i);
-  if(!poolIdx.length) return alert('所選章節目前沒有題目');
+  let pool = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類'));
+
+  // ✅ [修改3] 搜尋邏輯：只包含 題目 + 選項，移除解析
+  if(keyword) {
+    pool = pool.filter(item => {
+      const qText = (item.q.question || "").toLowerCase();
+      // 將所有選項串接成字串來比對
+      const optsText = (item.q.options || []).join(" ").toLowerCase();
+      
+      return qText.includes(keyword) || optsText.includes(keyword);
+    });
+  }
+
+  const poolIdx = pool.map(x=>x.i);
+
+  if(!poolIdx.length) {
+    if(keyword) return alert(`在選定的章節中，找不到包含「${keyword}」的題目。`);
+    return alert('所選章節目前沒有題目');
+  }
   
   let list = (mode==='shuffle') ? shuffle(poolIdx) : poolIdx;
   const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
@@ -225,11 +359,11 @@ function showReport(root){
   
   box.innerHTML = `
     <h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
-    <div style="margin-bottom:15px; font-size:16px;">
+    <div style="margin-bottom:15px; font-size:18px;">
        <span class="chip">答對：${st.right} / ${st.paper.length}</span>
-       <span class="chip">正確率：${Math.round(st.right/st.paper.length*100)}%</span>
+       <span class="chip">正確率：${st.paper.length > 0 ? Math.round(st.right/st.paper.length*100) : 0}%</span>
     </div>
-    ${wrongList.length===0 ? '<p style="font-size:18px; color:#16a34a">全對！太棒了 🎉</p>' : 
+    ${wrongList.length===0 ? '<p style="font-size:20px; color:#16a34a">全對！太棒了 🎉</p>' : 
       `<details open><summary>錯題清單 (${wrongList.length})</summary>
        <ul>${wrongList.map(pi => {
          const q = BANK[pi];
