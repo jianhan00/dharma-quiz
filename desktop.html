@@ -12,72 +12,45 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 全域基礎字體改回標準 16px，這樣大部分介面不會過大 */
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 16px;} 
+/* 全域字體還原 */
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 16px;}
 
-.wrap{max-width:1000px;margin:24px auto;padding:0 16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:24px}
+.wrap{max-width:1000px;margin:24px auto;padding:0 16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:18px}
 
-/* 標題稍微縮小一點回歸平衡 */
-h1{margin:0 0 12px;font-size:28px}.sub{color:var(--muted);font-size:13px}
+/* 標題還原 */
+h1{margin:0 0 8px;font-size:28px}.sub{color:var(--muted);font-size:13px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-
-/* --- [修正 1] 按鈕、下拉選單、輸入框：改回原本的大小 (16px) --- */
+/* 按鈕與輸入框還原 */
 button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink);font-size:16px;cursor:pointer}
 input[type="text"]{cursor:text; width: 220px;}
 
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
+.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;margin-right:8px}.hr{height:1px;background:var(--line);margin:14px 0}
 
-/* --- [修正 2] 統計徽章：改回原本的大小 (16px) --- */
-.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;margin-right:8px}
+/* 題目還原：22px */
+.question{font-size:22px;line-height:1.7;margin:8px 0 10px; font-weight: normal; color: var(--ink);}
 
-.hr{height:1px;background:var(--line);margin:20px 0}
-
-
-/* --- [保持大字體] 題目與選項為了閱讀舒適，維持您要求的大尺寸 --- */
-
-/* 題目：維持 28px */
-.question{font-size:28px; font-weight: normal; line-height:1.6; margin:20px 0 24px; color:#000;}
-
-/* 選項：維持 24px */
-.opt{display:flex;align-items:flex-start;gap:14px;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0;font-size:24px;background:#fff;cursor:pointer; transition: background 0.2s;}
+/* 選項還原：18px */
+.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:4px 0;font-size:18px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
-.opt input { width: 26px; height: 26px; margin-top: 6px; cursor: pointer; flex-shrink: 0; }
+.opt input { width: 18px; height: 18px; margin-top: 4px; cursor: pointer; flex-shrink: 0; }
 
-.feedback{margin-top:20px;border:1px solid var(--line);border-radius:14px;padding:20px;font-size:20px;background:#f8fafc; line-height: 1.6;}
+.feedback{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:17px;background:#f8fafc}
 .feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
 
-.nav{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
-.chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
+.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:16px;cursor:pointer}
 .chip input{width:18px;height:18px;cursor:pointer}
-
-.report{margin-top:24px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:24px}
+.report{margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px}
 .hidden{display:none}
 
-/* --- 手機版調整 --- */
+/* 手機版還原：題目20px，選項17px */
 @media(max-width:600px){
-  /* 手機上標題大小 */
   h1{font-size:24px}
-  
-  /* 手機上題目與選項維持大字體，閱讀才清楚 */
-  .question{font-size:28px; margin: 16px 0 20px;} 
-  .opt{font-size:24px; padding: 14px 16px;}
-  
-  /* 手機上的控制元件，這裡也改回適中大小，不要太巨大 */
-  input[type="text"]{width:100%; font-size: 16px;} 
-  select { font-size: 16px; }
-  
-  /* 為了排版整齊，手機上寬度還是維持好按的配置，但字體變回 16px */
-  .s-mode, .s-count { width: 48%; } 
-  .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; padding: 12px; font-size: 16px; } 
-  
-  .nav button { flex: 1; padding: 14px; font-size: 18px; } /* 上下一題按鈕稍微大一點點就好，方便按 */
-
-  .wrap { padding: 0 12px; margin: 12px auto; }
-  .card { padding: 18px; }
+  .question{font-size:20px}
+  .opt{font-size:17px}
+  input[type="text"]{width:100%;}
 }
 </style>
 </head>
@@ -105,7 +78,7 @@ async function init(){
     BANK = await r.json();
     mountStudent('#panel-student');
   } catch(e) {
-    $('#panel-student').innerHTML = `<p style="color:red; font-size:18px;">無法讀取題庫，請確認 questions.json 是否已上傳。</p>`;
+    $('#panel-student').innerHTML = `<p style="color:red">無法讀取題庫，請確認 questions.json 是否已上傳。</p>`;
   }
 }
 
@@ -126,7 +99,7 @@ function mountStudent(selector){
       <div class="chips s-sections"></div>
     </div>
 
-    <div class="row" style="margin-top:16px">
+    <div class="row" style="margin-top:10px">
       <div style="font-size:16px;font-weight:bold">2. 關鍵字搜尋：</div>
       <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或解析)...">
     </div>
@@ -134,10 +107,10 @@ function mountStudent(selector){
     <div class="hr"></div>
 
     <div class="row">
-      <label style="font-size:16px">模式</label>
+      <label>模式</label>
       <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
       
-      <label style="font-size:16px">題數</label>
+      <label>題數</label>
       <select class="s-count">
         <option value="all" selected>全部</option>
         <option value="10">10</option>
@@ -309,11 +282,11 @@ function showReport(root){
   
   box.innerHTML = `
     <h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
-    <div style="margin-bottom:15px; font-size:18px;">
+    <div style="margin-bottom:15px; font-size:16px;">
        <span class="chip">答對：${st.right} / ${st.paper.length}</span>
        <span class="chip">正確率：${st.paper.length > 0 ? Math.round(st.right/st.paper.length*100) : 0}%</span>
     </div>
-    ${wrongList.length===0 ? '<p style="font-size:20px; color:#16a34a">全對！太棒了 🎉</p>' : 
+    ${wrongList.length===0 ? '<p style="font-size:18px; color:#16a34a">全對！太棒了 🎉</p>' : 
       `<details open><summary>錯題清單 (${wrongList.length})</summary>
        <ul>${wrongList.map(pi => {
          const q = BANK[pi];
@@ -325,8 +298,8 @@ function showReport(root){
          </li>`;
        }).join('')}</ul></details>`
     }
-    <div style="margin-top:24px">
-       <button class="btn brand" onclick="mountStudent('#panel-student')" style="width:100%; font-size:16px; padding:12px;">再練習一次</button>
+    <div style="margin-top:20px">
+       <button class="btn brand" onclick="mountStudent('#panel-student')">再練習一次</button>
     </div>
   `;
   root.querySelector('.s-nav').classList.add('hidden');
