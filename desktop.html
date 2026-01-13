@@ -12,22 +12,22 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 1. 基礎字體維持 18px */
+/* 1. 基礎字體 18px */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
 
-/* ✅ [修改1] 離螢幕頂端極致緊湊：8px */
-.wrap{max-width:1000px;margin:8px auto;padding:0 12px}
+/* 離螢幕頂端設定為 10px (配合整體緊湊感) */
+.wrap{max-width:1000px;margin:10px auto;padding:0 12px}
 
-/* ✅ [修改2] 卡片內距縮減：上15px / 下10px */
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:15px 15px 10px 15px;}
+/* ✅ [修改1] 卡片內距：上15px / 下10px (左右維持16px) */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:15px 16px 10px 16px;}
 
-/* ✅ [修改3] 標題邊距縮減：下方 6px */
+/* 標題邊距：下方 6px */
 h1{margin:0 0 6px;font-size:28px}.sub{color:var(--muted);font-size:14px}
 
-/* 行間距縮小 */
+/* 行間距 */
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 
-/* 2. 元件樣式：內距改為 8px，讓按鈕變矮一點省空間 */
+/* 2. 元件樣式：內距 8px */
 button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink);font-size:18px;cursor:pointer}
 input[type="text"]{cursor:text; width: 240px;}
 
@@ -36,14 +36,11 @@ input[type="text"]{cursor:text; width: 240px;}
 /* 統計標籤 */
 .badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:18px;}
 
-/* ✅ [修改4] 分隔線上下間距縮減：10px */
+/* ✅ [修改2] 分隔線上下間距：10px */
 .hr{height:1px;background:var(--line);margin:10px 0}
 
 /* 3. 題目與選項 */
-/* 題目邊距縮小 */
 .question{font-size:25px; line-height:1.4; margin:10px 0 12px; font-weight: normal; color: var(--ink);}
-
-/* 選項邊距縮小 */
 .opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:21px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
@@ -74,7 +71,7 @@ input[type="text"]{cursor:text; width: 240px;}
   input[type="text"]{width:100%; font-size: 18px;}
   select { font-size: 18px; }
   
-  /* 統計數據：間距由 6px 縮為 4px */
+  /* 統計數據：一行 */
   .stats-row {
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr;
@@ -83,7 +80,7 @@ input[type="text"]{cursor:text; width: 240px;}
   }
   .stats-row .badge {
     font-size: 15px;
-    padding: 6px 2px; /* 上下內距再小一點 */
+    padding: 6px 2px;
     text-align: center;
     margin: 0;
     white-space: nowrap;
@@ -109,11 +106,11 @@ input[type="text"]{cursor:text; width: 240px;}
 
   .btn-group {
     width: 100%;
-    margin-top: 6px; /* 按鈕群組上方間距縮小 */
+    margin-top: 6px;
     gap: 6px;
   }
   .s-start, .s-reset, .s-finish {
-    padding: 10px 2px; /* 按鈕變矮一點 */
+    padding: 10px 2px;
     font-size: 17px;
     flex: 1; 
     white-space: nowrap; 
@@ -153,7 +150,6 @@ async function init(){
 function mountStudent(selector){
   const el = $(selector);
   
-  // ✅ 這裡的 inline style margin-top 也從 12px 改為 8px，更緊湊
   el.innerHTML=`
     <div class="row stats-row">
       <div class="badge"><b class="s-total">${BANK.length}</b> 題</div>
