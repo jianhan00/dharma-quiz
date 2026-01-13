@@ -15,13 +15,13 @@
 /* 1. 基礎字體 18px */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
 
-/* ✅ [修改1] 離螢幕頂端 22px */
-.wrap{max-width:1000px;margin:22px auto;padding:0 16px}
+/* ✅ [修改1] 離螢幕頂端改為 12px */
+.wrap{max-width:1000px;margin:12px auto;padding:0 16px}
 
-/* ✅ [修改2] 卡片內距：上20px / 下16px (左右20px) */
+/* 卡片內距：上20px / 下16px */
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:20px 20px 16px 20px;}
 
-/* ✅ [修改3] 標題邊距：下方 10px (配合卡片下方內距16px，總和26px) */
+/* 標題邊距 */
 h1{margin:0 0 10px;font-size:28px}.sub{color:var(--muted);font-size:14px}
 
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -35,7 +35,8 @@ input[type="text"]{cursor:text; width: 240px;}
 /* 統計標籤 */
 .badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:18px;}
 
-.hr{height:1px;background:var(--line);margin:16px 0}
+/* ✅ [修改2] 分隔線上下間距改為 14px */
+.hr{height:1px;background:var(--line);margin:14px 0}
 
 /* 3. 題目與選項 */
 .question{font-size:25px; line-height:1.5; margin:12px 0 16px; font-weight: normal; color: var(--ink);}
