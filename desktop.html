@@ -12,7 +12,7 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 1. 基礎介面字體：17px */
+/* 1. 基礎字體 */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 17px;}
 
 .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
@@ -21,22 +21,19 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ari
 h1{margin:0 0 10px;font-size:28px}.sub{color:var(--muted);font-size:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-/* 2. 按鈕、輸入框：17px */
+/* 2. 元件樣式 */
 button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#fff;color:var(--ink);font-size:17px;cursor:pointer}
 input[type="text"]{cursor:text; width: 240px;}
 
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
 
-/* 統計標籤 (Badge) */
-/* 這裡移除了 margin-right，因為 row 已經有 gap 了，避免手機版空間計算錯誤 */
+/* 統計標籤 */
 .badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:17px;}
 
 .hr{height:1px;background:var(--line);margin:16px 0}
 
-/* 3. 題目：電腦版 23px */
+/* 3. 題目與選項 */
 .question{font-size:23px; line-height:1.6; margin:12px 0 16px; font-weight: normal; color: var(--ink);}
-
-/* 4. 選項：電腦版 19px */
 .opt{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:6px 0;font-size:19px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
@@ -53,38 +50,57 @@ input[type="text"]{cursor:text; width: 240px;}
 .report{margin-top:16px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px}
 .hidden{display:none}
 
-/* 5. 手機版專屬設定 */
+/* ✅ 特殊排版輔助類別 */
+.control-group { display: flex; gap: 10px; align-items: center; }
+.ctrl-item { display: flex; align-items: center; gap: 6px; }
+
+/* 4. 手機版專屬設定 (寬度 < 600px) */
 @media(max-width:600px){
   h1{font-size:24px}
-  
-  /* 手機版題目：21px */
   .question{font-size:21px}
-  
-  /* 手機版選項：18px */
   .opt{font-size:18px}
-  
-  /* 手機版介面 */
   input[type="text"]{width:100%; font-size: 17px;}
   select, button { font-size: 17px; }
   
-  .s-mode, .s-count { width: 48%; }
-  .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; }
-
-  /* ✅ [重點修改] 強制統計標籤在同一行 */
+  /* ✅ [修改1] 統計數據：強制一行三列 Grid 佈局 */
   .stats-row {
-    flex-wrap: nowrap !important; /* 禁止換行 */
-    gap: 6px; /* 縮小間距 */
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr; /* 三等份 */
+    gap: 8px;
+    width: 100%;
   }
-  
-  /* 手機上的統計標籤：縮小字體與內距以塞入同一行 */
   .stats-row .badge {
-    font-size: 15px; /* 稍微縮小字體 (原17px會太擠) */
-    padding: 8px 4px; /* 縮小左右內距 */
-    flex: 1; /* 平均分配寬度 */
+    font-size: 14px; /* 字體縮小以防換行 */
+    padding: 8px 2px; /* 減少內距 */
     text-align: center;
-    white-space: nowrap; /* 禁止文字折行 */
     margin: 0;
+    white-space: nowrap; /* 禁止文字換行 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+  /* 手機上隱藏部分文字讓版面更清爽 (可選) */
+  /* .b-label { display: none; } */
+
+  /* ✅ [修改2] 模式與題數：強制同一行 */
+  .control-group {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .ctrl-item {
+    flex: 1; /* 各佔一半 */
+    flex-direction: column; /* 標籤在輸入框上方，比較省空間 */
+    align-items: stretch; /* 拉伸至滿寬 */
+    gap: 4px;
+  }
+  .ctrl-item label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+  .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; }
 }
 </style>
 </head>
@@ -119,12 +135,14 @@ async function init(){
 function mountStudent(selector){
   const el = $(selector);
   
-  // ✅ 在這裡的 div class 加入了 "stats-row" 以便 CSS 控制
+  // HTML 結構微調：
+  // 1. stats-row 用於 Grid 佈局
+  // 2. control-group 包裹 模式與題數
   el.innerHTML=`
     <div class="row stats-row">
-      <div class="badge">共 <b class="s-total">${BANK.length}</b> 題</div>
-      <div class="badge">目前：<b class="s-progress">0/0</b></div>
-      <div class="badge">已答對：<b class="s-right">0</b></div>
+      <div class="badge"><span class="b-label">共 </span><b class="s-total">${BANK.length}</b><span class="b-label"> 題</span></div>
+      <div class="badge"><span class="b-label">目前 </span><b class="s-progress">0/0</b></div>
+      <div class="badge"><span class="b-label">答對 </span><b class="s-right">0</b></div>
     </div>
     
     <div class="hr"></div>
@@ -142,16 +160,21 @@ function mountStudent(selector){
     <div class="hr"></div>
 
     <div class="row">
-      <label>模式</label>
-      <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
-      
-      <label>題數</label>
-      <select class="s-count">
-        <option value="all" selected>全部</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="50">50</option>
-      </select>
+      <div class="control-group">
+        <div class="ctrl-item">
+          <label>模式</label>
+          <select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
+        </div>
+        <div class="ctrl-item">
+          <label>題數</label>
+          <select class="s-count">
+            <option value="all" selected>全部</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
       
       <button class="btn brand s-start">開始作答</button>
       <button class="btn ghost s-reset">重置</button>
