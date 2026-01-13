@@ -12,24 +12,24 @@
 :root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
 *{box-sizing:border-box}
 
-/* 1. 基礎介面字體：設定為 17px */
+/* 1. 基礎介面字體：17px */
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 17px;}
 
 .wrap{max-width:1000px;margin:24px auto;padding:0 16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:20px}
 
-/* 標題 */
 h1{margin:0 0 10px;font-size:28px}.sub{color:var(--muted);font-size:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
-/* 2. 按鈕、輸入框、下拉選單：設定為 17px */
+/* 2. 按鈕、輸入框：17px */
 button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#fff;color:var(--ink);font-size:17px;cursor:pointer}
 input[type="text"]{cursor:text; width: 240px;}
 
 .btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
 
-/* 統計標籤：設定為 17px */
-.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:17px;margin-right:8px}
+/* 統計標籤 (Badge) */
+/* 這裡移除了 margin-right，因為 row 已經有 gap 了，避免手機版空間計算錯誤 */
+.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:17px;}
 
 .hr{height:1px;background:var(--line);margin:16px 0}
 
@@ -40,7 +40,6 @@ input[type="text"]{cursor:text; width: 240px;}
 .opt{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:6px 0;font-size:19px;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
-/* 選項前的圈圈/方塊配合文字稍微調大 */
 .opt input { width: 19px; height: 19px; margin-top: 4px; cursor: pointer; flex-shrink: 0; }
 
 .feedback{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:17px;background:#f8fafc}
@@ -64,12 +63,28 @@ input[type="text"]{cursor:text; width: 240px;}
   /* 手機版選項：18px */
   .opt{font-size:18px}
   
-  /* 手機版介面維持 17px，優化寬度 */
+  /* 手機版介面 */
   input[type="text"]{width:100%; font-size: 17px;}
   select, button { font-size: 17px; }
   
   .s-mode, .s-count { width: 48%; }
   .s-start, .s-reset, .s-finish { width: 100%; margin-top: 8px; }
+
+  /* ✅ [重點修改] 強制統計標籤在同一行 */
+  .stats-row {
+    flex-wrap: nowrap !important; /* 禁止換行 */
+    gap: 6px; /* 縮小間距 */
+  }
+  
+  /* 手機上的統計標籤：縮小字體與內距以塞入同一行 */
+  .stats-row .badge {
+    font-size: 15px; /* 稍微縮小字體 (原17px會太擠) */
+    padding: 8px 4px; /* 縮小左右內距 */
+    flex: 1; /* 平均分配寬度 */
+    text-align: center;
+    white-space: nowrap; /* 禁止文字折行 */
+    margin: 0;
+  }
 }
 </style>
 </head>
@@ -104,8 +119,9 @@ async function init(){
 function mountStudent(selector){
   const el = $(selector);
   
+  // ✅ 在這裡的 div class 加入了 "stats-row" 以便 CSS 控制
   el.innerHTML=`
-    <div class="row">
+    <div class="row stats-row">
       <div class="badge">共 <b class="s-total">${BANK.length}</b> 題</div>
       <div class="badge">目前：<b class="s-progress">0/0</b></div>
       <div class="badge">已答對：<b class="s-right">0</b></div>
