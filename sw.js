@@ -1,8 +1,9 @@
-const CACHE_NAME = 'quiz-app-v1';
+const CACHE_NAME = 'quiz-app-v2';
 const ASSETS = [
-  './', 
+  './',
   './index.html',
-  './questions.json'
+  './questions.json',
+  './manifest.json'
 ];
 
 // 1. 安裝 Service Worker
@@ -13,7 +14,7 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// 2. 啟動並清理舊快取
+// 2. 啟動並清理舊快取（含舊版本殘留的 ?t= 快取）
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -24,7 +25,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// 3. 攔截請求：網路優先 (Network First)
+// 3. 攔截請求：網路優先 (Network First)，離線時退回快取
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
@@ -36,7 +37,8 @@ self.addEventListener('fetch', (e) => {
         return res;
       })
       .catch(() => {
-        return caches.match(e.request);
+        // ignoreSearch: 忽略網址查詢字串，確保離線時仍能命中題庫快取
+        return caches.match(e.request, { ignoreSearch: true });
       })
   );
 });
