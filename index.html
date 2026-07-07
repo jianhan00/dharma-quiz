@@ -73,6 +73,7 @@ padding-right: 30px;
 .control-group { display: flex; gap: 8px; align-items: center; }
 .ctrl-item { display: flex; align-items: center; gap: 6px; }
 .btn-group { display: flex; gap: 8px; }
+.step-title { font-size: 18px; font-weight: bold; }
 /* 4. 手機版專屬設定 */
 @media(max-width:600px){
 h1{font-size:26px}
@@ -81,8 +82,10 @@ h1{font-size:26px}
 .feedback{font-size:23px}
 .s-fbAns,.s-fbExp{font-size:23px}
 .exp{font-size:23px}
-input[type="text"]{width:100%; font-size: 18px;}
-select { font-size: 18px; }
+input[type="text"]{width:100%; font-size: 20px;}
+select { font-size: 20px; }
+.step-title{font-size:21px}
+.chip{font-size:21px}
 .stats-row {
 display: grid !important;
 grid-template-columns: 1fr 1fr 1fr;
@@ -90,7 +93,7 @@ gap: 4px;
 width: 100%;
 }
 .stats-row .badge {
-font-size: 15px;
+font-size: 18px;
 padding: 6px 2px;
 text-align: center;
 margin: 0;
@@ -101,10 +104,10 @@ align-items: center;
 }
 .control-group { width: 100%; display: flex; justify-content: space-between; gap: 6px; }
 .ctrl-item { flex: 1; flex-direction: row; align-items: center; justify-content: flex-start; }
-.ctrl-item label { font-size: 15px; white-space: nowrap; }
+.ctrl-item label { font-size: 19px; white-space: nowrap; }
 .ctrl-item select { width: 100%; }
 .btn-group { width: 100%; margin-top: 6px; gap: 6px; }
-.s-start, .s-reset, .s-finish { padding: 10px 2px; font-size: 17px; flex: 1; white-space: nowrap; }
+.s-start, .s-finish { padding: 10px 2px; font-size: 20px; flex: 1; white-space: nowrap; }
 .s-finish { flex: 1.2; letter-spacing: -0.5px; }
 }
 </style>
@@ -187,11 +190,11 @@ function mountStudent(selector){
 </div>
 <div class="hr"></div>
 <div class="row">
-<div style="font-size:18px;font-weight:bold">1. 選擇章節：</div>
+<div class="step-title">1. 選擇章節：</div>
 <div class="chips s-sections"></div>
 </div>
 <div class="row" style="margin-top:8px">
-<div style="font-size:18px;font-weight:bold">2. 關鍵字搜尋：</div>
+<div class="step-title">2. 關鍵字搜尋：</div>
 <input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或選項)...">
 </div>
 <div class="hr"></div>
@@ -213,7 +216,6 @@ function mountStudent(selector){
 </div>
 <div class="btn-group">
 <button class="btn brand s-start">開始作答</button>
-<button class="btn ghost s-reset">重置</button>
 <button class="btn ghost s-finish">模擬測驗</button>
 </div>
 </div>
@@ -242,7 +244,6 @@ function mountStudent(selector){
 `).join('');
 
   el.querySelector('.s-start').onclick = () => start(el);
-  el.querySelector('.s-reset').onclick = () => mountStudent(selector);
   el.querySelector('.s-finish').onclick = () => startExam(el);   // 模擬測驗
   el.querySelector('.s-nav-reset').onclick = () => mountStudent(selector);  // 中途重置
   el.querySelector('.s-prev').onclick = () => { if(state.idx>0){ state.idx--; render(el); } };
