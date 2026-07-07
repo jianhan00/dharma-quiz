@@ -49,7 +49,7 @@ padding-right: 30px;
 .hr{height:1px;background:var(--line);margin:10px 0}
 /* 3. 題目與選項 */
 .question{font-size:25px; line-height:1.4; margin:10px 0 12px; font-weight: normal; color: var(--ink);}
-.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:21px;background:#fff;cursor:pointer}
+.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:22px;line-height:1.5;background:#fff;cursor:pointer}
 .opt:hover{background:#f8fafc}
 .opt.locked{cursor:default}
 .opt.locked:hover{background:#fff}
@@ -57,8 +57,12 @@ padding-right: 30px;
 .opt.correct:hover{background:#f0fdf4}.opt.wrong:hover{background:#fef2f2}
 .opt input { width: 21px; height: 21px; margin-top: 5px; cursor: pointer; flex-shrink: 0; }
 .opt input:disabled { cursor: default; }
-.feedback{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:18px;background:#f8fafc}
+/* 作答回饋與解析（放大字級） */
+.feedback{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:20px;line-height:1.7;background:#f8fafc}
 .feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
+.s-fbAns,.s-fbExp{font-size:20px;line-height:1.7;margin-top:4px}
+/* 錯題清單解析（放大字級） */
+.exp{font-size:18px;color:var(--muted);line-height:1.7}
 .nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:18px;cursor:pointer}
@@ -73,7 +77,10 @@ padding-right: 30px;
 @media(max-width:600px){
 h1{font-size:26px}
 .question{font-size:24px}
-.opt{font-size:20px}
+.opt{font-size:23px}
+.feedback{font-size:21px}
+.s-fbAns,.s-fbExp{font-size:21px}
+.exp{font-size:19px}
 input[type="text"]{width:100%; font-size: 18px;}
 select { font-size: 18px; }
 .stats-row {
@@ -126,6 +133,12 @@ function esc(s){
   return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// 章節顯示：去掉開頭的編號（例：「08 心生滅門－2」→「心生滅門－2」）
+// 只影響顯示，篩選仍用完整的 section 值
+function sectionLabel(s){
+  return String(s).replace(/^\d+(-\d+)?\s+/, '');
+}
+
 // 手機（窄螢幕）才自動捲動，減少上下滑動
 const isMobile = () => window.matchMedia('(max-width:600px)').matches;
 function scrollToQuestion(root){
@@ -137,6 +150,11 @@ function scrollToAnswer(root){
   if(!isMobile()) return;
   const fb = root.querySelector('.s-fb');
   if(fb) fb.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function scrollToNav(root){
+  if(!isMobile()) return;
+  const nav = root.querySelector('.s-nav');
+  if(nav) nav.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 // 強制刷新函式
@@ -196,7 +214,7 @@ function mountStudent(selector){
 <div class="btn-group">
 <button class="btn brand s-start">開始作答</button>
 <button class="btn ghost s-reset">重置</button>
-<button class="btn ghost s-finish" disabled>完成並看成績</button>
+<button class="btn ghost s-finish">模擬測驗</button>
 </div>
 </div>
 <div class="hr"></div>
@@ -214,24 +232,33 @@ function mountStudent(selector){
 <div class="report hidden s-report"></div>
 `;
 
-  const state = {paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}};
+  const state = {paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}, examMode:false};
   el._state = state;
 
   const secs = [...new Set(BANK.map(q => q.section||'未分類'))];
   el.querySelector('.s-sections').innerHTML = secs.map(s => `
-<label class="chip"><input type="checkbox" value="${esc(s)}" checked> ${esc(s)}</label>
+<label class="chip"><input type="checkbox" value="${esc(s)}" checked> ${esc(sectionLabel(s))}</label>
 `).join('');
 
   el.querySelector('.s-start').onclick = () => start(el);
   el.querySelector('.s-reset').onclick = () => mountStudent(selector);
+  el.querySelector('.s-finish').onclick = () => startExam(el);   // 模擬測驗
   el.querySelector('.s-prev').onclick = () => { if(state.idx>0){ state.idx--; render(el); } };
   el.querySelector('.s-next').onclick = () => {
     if(state.idx < state.paper.length-1){ state.idx++; render(el); }
     else { showReport(el); }
   };
-  el.querySelector('.s-finish').onclick = () => showReport(el);
 }
 
+// 隱藏並清空上一輪的成績報表與回饋（避免舊分數殘留）
+function resetOutputs(root){
+  const rep = root.querySelector('.s-report');
+  rep.classList.add('hidden');
+  rep.innerHTML = '';
+  root.querySelector('.s-fb').classList.add('hidden');
+}
+
+// 一般練習：依章節/關鍵字/模式/題數作答，作答後顯示對錯與解析
 function start(root){
   const st = root._state;
   const mode = root.querySelector('.s-mode').value;
@@ -261,8 +288,38 @@ function start(root){
   const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
   st.paper = list.slice(0, want);
   st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
+  st.examMode = false;
 
-  root.querySelector('.s-finish').disabled = false;
+  resetOutputs(root);                              // 開始作答即重置舊成績
+  root.querySelector('.s-nav').classList.remove('hidden');
+  render(root);
+}
+
+// 模擬測驗：全題庫隨機抽 25 是非題 + 25 選擇題，作答不顯示解析，答完出成績
+function startExam(root){
+  const st = root._state;
+
+  const tfIdx = [];
+  const mcIdx = [];
+  BANK.forEach((q,i) => {
+    const n = (q.options || []).length;
+    if(n === 2) tfIdx.push(i); else mcIdx.push(i);
+  });
+  if(!tfIdx.length && !mcIdx.length) return alert('題庫是空的');
+
+  const tfPick = shuffle(tfIdx).slice(0, Math.min(25, tfIdx.length));
+  const mcPick = shuffle(mcIdx).slice(0, Math.min(25, mcIdx.length));
+
+  if(tfPick.length < 25 || mcPick.length < 25){
+    const ok = confirm(`題庫數量不足 25＋25（目前是非題 ${tfPick.length} 題、選擇題 ${mcPick.length} 題）。\n仍要以現有題數進行模擬測驗嗎？`);
+    if(!ok) return;
+  }
+
+  st.paper = [...tfPick, ...mcPick];   // 是非題在前、選擇題在後
+  st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
+  st.examMode = true;
+
+  resetOutputs(root);
   root.querySelector('.s-nav').classList.remove('hidden');
   render(root);
 }
@@ -273,7 +330,7 @@ function render(root){
   const q = BANK[pi];
 
   root.querySelector('.s-progress').textContent = `${st.idx+1}/${st.paper.length}`;
-  root.querySelector('.s-right').textContent = st.right;
+  root.querySelector('.s-right').textContent = st.examMode ? '—' : st.right;  // 模擬測驗不即時顯示答對數
   root.querySelector('.s-q').textContent = q.question;
 
   const box = root.querySelector('.s-optBox');
@@ -310,12 +367,17 @@ function render(root){
       // 單選：一選即定案；多選：選滿正解數量即定案
       if(!isMulti || st.user[pi].length >= correct.length){
         st.revealed[pi] = true;
-        if(same(st.user[pi], q.answer) && !st.firstScored[pi]){ st.right++; st.firstScored[pi]=true; }
+        // 一般練習才即時計分並更新答對數；模擬測驗於交卷時才結算
+        if(!st.examMode && same(st.user[pi], q.answer) && !st.firstScored[pi]){
+          st.right++; st.firstScored[pi]=true;
+          root.querySelector('.s-right').textContent = st.right;
+        }
         // 鎖定本題所有選項，之後不可修改
         box.querySelectorAll('input').forEach(inp => inp.disabled = true);
         box.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
         refreshUI(root, q, pi);
-        scrollToAnswer(root);   // 手機：作答後自動捲到解答
+        // 手機自動捲動：練習→捲到解答；模擬測驗→捲到下一題按鈕
+        if(st.examMode) scrollToNav(root); else scrollToAnswer(root);
       }
     };
 
@@ -329,11 +391,18 @@ function render(root){
 
 function refreshUI(root, q, pi){
   const st = root._state;
+  const fb = root.querySelector('.s-fb');
+
+  // 模擬測驗：作答過程一律不顯示對錯與解析
+  if(st.examMode){
+    fb.classList.add('hidden');
+    return;
+  }
+
   const isRev = st.revealed[pi];
   const uAns = normalize(st.user[pi]);
   const correct = normalize(q.answer);
   const ok = same(uAns, q.answer);
-  const fb = root.querySelector('.s-fb');
 
   if(isRev){
     fb.classList.remove('hidden');
@@ -357,23 +426,26 @@ function showReport(root){
   const box = root.querySelector('.s-report');
   box.classList.remove('hidden');
 
+  const total = st.paper.length;
+  const correctCount = st.paper.filter(pi => same(st.user[pi], BANK[pi].answer)).length;
   const wrongList = st.paper.filter(pi => !same(st.user[pi], BANK[pi].answer));
+  const heading = st.examMode ? '模擬測驗結果' : '本次練習已完成';
 
   box.innerHTML = `
-<h2 style="color:#3b82f6; margin-top:0">本次練習已完成</h2>
+<h2 style="color:#3b82f6; margin-top:0">${heading}</h2>
 <div style="margin-bottom:15px; font-size:18px;">
-<span class="chip">答對：${st.right} / ${st.paper.length}</span>
-<span class="chip">正確率：${st.paper.length > 0 ? Math.round(st.right/st.paper.length*100) : 0}%</span>
+<span class="chip">答對：${correctCount} / ${total}</span>
+<span class="chip">正確率：${total > 0 ? Math.round(correctCount/total*100) : 0}%</span>
 </div>
 ${wrongList.length===0 ? '<p style="font-size:20px; color:#16a34a">全對！太棒了 🎉</p>' :
 `<details open><summary>錯題清單 (${wrongList.length})</summary>
 <ul>${wrongList.map(pi => {
   const q = BANK[pi];
   const ansText = normalize(q.answer).map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
-  return `<li>
+  return `<li style="margin-bottom:14px">
 <b>${esc(q.question)}</b><br>
 <span style="color:#16a34a">正解：${esc(ansText)}</span><br>
-<span class="sub">解析：${esc(q.explanation||'無')}</span>
+<span class="exp">解析：${esc(q.explanation||'無')}</span>
 </li>`;
 }).join('')}</ul></details>`
 }
