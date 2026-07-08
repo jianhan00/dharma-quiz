@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1A1A2E">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>大乘起信論 · 期末刷題</title>
 <style>
 :root{
@@ -58,10 +60,9 @@ body{
 /* ============ 封面 ============ */
 .cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
   min-height:calc(100vh - 60px);padding:20px 0}
-.seal{width:78px;height:78px;border:2.5px solid var(--wine);border-radius:10px;color:var(--wine);
-  font-family:var(--serif);font-weight:700;display:flex;align-items:center;justify-content:center;
-  font-size:30px;letter-spacing:2px;line-height:1;transform:rotate(-3deg);
-  box-shadow:0 2px 0 rgba(139,38,53,.12);writing-mode:vertical-rl;padding:8px 4px}
+.seal{width:82px;height:82px;border:2.5px solid var(--wine);border-radius:12px;color:var(--wine);
+  font-family:var(--serif);font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:31px;line-height:1.05;transform:rotate(-3deg);box-shadow:0 2px 5px rgba(139,38,53,.14);padding:8px}
 .cover-eyebrow{margin-top:26px;color:var(--gold);font-family:var(--serif);letter-spacing:.5em;
   font-size:15px;padding-left:.5em}
 .cover-title{font-family:var(--serif);font-weight:700;color:var(--ink);font-size:52px;
@@ -73,32 +74,32 @@ body{
 
 /* ============ 章節頁 ============ */
 .head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
-.head-title{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:.06em;color:var(--ink)}
+.head-title{font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:.06em;color:var(--ink)}
 .icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);
   color:var(--muted);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .icon-btn:active{transform:rotate(180deg)}
-.section-num{font-family:var(--serif);color:var(--gold);font-weight:700;font-size:19px;margin:18px 0 8px;letter-spacing:.08em}
+.section-num{font-family:var(--serif);color:var(--gold);font-weight:700;font-size:22px;margin:18px 0 8px;letter-spacing:.08em}
 .section-num small{color:var(--muted);font-weight:400;font-family:var(--sans);font-size:14px;letter-spacing:0;margin-left:6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);
-  background:var(--card);border-radius:999px;font-size:19px;cursor:pointer;transition:.15s;color:var(--ink-soft)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;font-size:22px;cursor:pointer;transition:.15s;color:var(--ink-soft)}
 .chip.on{background:#F3ECDA;border-color:var(--gold);color:var(--ink);font-weight:500}
 .chip .tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:flex;
   align-items:center;justify-content:center;font-size:13px;color:transparent;background:#fff;flex-shrink:0}
 .chip.on .tick{background:var(--gold);border-color:var(--gold);color:#fff}
-.kw{width:100%;font-family:var(--sans);font-size:19px;border:1px solid var(--line);border-radius:12px;
-  padding:12px 14px;background:var(--card);color:var(--ink)}
+.kw{width:100%;font-family:var(--sans);font-size:21px;border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;background:var(--card);color:var(--ink)}
 .kw::placeholder{color:var(--muted)}
 .controls{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
 .ctrl{flex:1;min-width:130px}
-.ctrl label{display:block;font-size:15px;color:var(--muted);margin-bottom:5px;letter-spacing:.1em}
-.sel{width:100%;font-family:var(--sans);font-size:19px;border:1px solid var(--line);border-radius:12px;
-  padding:11px 34px 11px 14px;background:var(--card);color:var(--ink);cursor:pointer;
+.ctrl label{display:block;font-size:18px;color:var(--muted);margin-bottom:5px;letter-spacing:.1em}
+.sel{width:100%;font-family:var(--sans);font-size:21px;border:1px solid var(--line);border-radius:12px;
+  padding:12px 34px 12px 14px;background:var(--card);color:var(--ink);cursor:pointer;
   appearance:none;-webkit-appearance:none;
   background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292%22%20height%3D%22292%22%3E%3Cpath%20fill%3D%22%23C0912F%22%20d%3D%22M287%2069a18%2018%200%200%200-13-5H18a18%2018%200%200%200-13%2031l128%20128a18%2018%200%200%200%2026%200L287%2095a18%2018%200%200%200%200-26z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat:no-repeat;background-position:right 12px center;background-size:12px}
 .actions{display:flex;gap:12px;margin-top:22px}
-.actions .btn{flex:1;font-size:20px;letter-spacing:.15em;padding:14px 8px}
+.actions .btn{flex:1;font-size:22px;letter-spacing:.12em;padding:15px 8px}
 .exam-hint{margin-top:14px;color:var(--muted);font-size:14px;line-height:1.6;
   border-left:2px solid var(--gold);padding:2px 0 2px 12px}
 
@@ -160,10 +161,40 @@ body{
 .result-actions .btn{flex:1;font-size:19px;letter-spacing:.1em}
 .allright{text-align:center;color:var(--sage);font-size:22px;font-family:var(--serif);margin-top:18px}
 
-/* 桌機微調 */
+/* ============ 電腦版：置中經頁面板 ============ */
 @media(min-width:700px){
-  .cover-title{font-size:64px}
-  .q-text{font-size:26px}
+  body{padding:44px 0}
+  .wrap{max-width:860px;min-height:auto;margin:0 auto;padding:52px 60px 60px;
+    background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);
+    border-radius:22px;box-shadow:0 18px 56px rgba(26,26,46,.09)}
+  /* 內層卡片融入面板，避免卡中卡 */
+  .q-card,.result-card{background:transparent;border:none;box-shadow:none;padding:0}
+  /* 封面在面板內像一頁扉頁 */
+  .cover{min-height:auto;padding:36px 0 24px}
+  .cover-title{font-size:66px}
+  .cover-sub{font-size:20px}
+  .cover-enter{margin-top:38px}
+  /* 章節頁加大 */
+  .head-title{font-size:34px}
+  .section-num{font-size:24px}
+  .chips{gap:12px}
+  .chip{font-size:22px;padding:11px 20px}
+  .kw,.sel{font-size:21px}
+  .ctrl label{font-size:17px}
+  .actions .btn{font-size:22px}
+  /* 作答加大 */
+  .quiz-top{margin-bottom:14px}
+  .mode-tag{font-size:18px}
+  .q-text{font-size:27px}
+  .opt{font-size:24px}
+  .feedback,.fb-title,.fb-ans,.fb-exp{font-size:24px}
+  .nav .btn{font-size:19px}
+  /* 成績加大 */
+  .result-title{font-size:30px}
+  .score-big{font-size:68px}
+  .wrong-q{font-size:22px}
+  .wrong-ans{font-size:21px}
+  .wrong-exp{font-size:24px}
 }
 </style>
 </head>
@@ -213,7 +244,7 @@ function buildApp(){
   APP.innerHTML = `
 <!-- 封面 -->
 <section class="screen cover" id="screen-cover">
-  <div class="seal">起信</div>
+  <div class="seal"><span>起</span><span>信</span></div>
   <div class="cover-eyebrow">大乘經論 · 期末研習</div>
   <h1 class="cover-title">大乘起信論</h1>
   <div class="cover-line"></div>
@@ -418,6 +449,8 @@ function render(){
         if(!ST.examMode && same(ST.user[pi], q.answer) && !ST.firstScored[pi]){
           ST.right++; ST.firstScored[pi] = true;
         }
+        markSelected(box, ST.user[pi]);                        // 立即顯示實心圓點
+        $$('.opt', box).forEach(r => r.classList.add('locked')); // 鎖定，不可再改
         refreshUI(q, pi);
         if(ST.examMode) scrollToEl('.s-nav','center'); else scrollToEl('.s-fb','center');
       } else {
@@ -501,8 +534,8 @@ function showReport(){
 
   box.innerHTML = scoreBlock + `<div class="rule"></div>` + wrongBlock + `
     <div class="result-actions">
-      <button class="btn btn-primary" onclick="gotoSelect()">再選一次</button>
-      <button class="btn btn-ghost" onclick="showScreen('cover')">回封面</button>
+      <button class="btn btn-primary" onclick="gotoSelect()">再練習一次</button>
+      <button class="btn btn-ghost" onclick="showScreen('cover')">回主畫面</button>
     </div>`;
 
   showScreen('result');
