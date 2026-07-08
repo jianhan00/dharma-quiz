@@ -5,474 +5,514 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#3b82f6">
+<meta name="theme-color" content="#1A1A2E">
 <link rel="manifest" href="manifest.json">
-<title>114(下)起信論期末考刷題小程序</title>
+<title>大乘起信論 · 期末刷題</title>
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--brand:#3b82f6;--ok:#16a34a;--bad:#ef4444;--line:#e5e7eb}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-/* 1. 基礎字體 18px */
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--ink); font-size: 18px;}
-/* 離螢幕頂端 24px */
-.wrap{max-width:1000px;margin:24px auto;padding:0 12px}
-/* 卡片內距：上15px / 下10px */
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.06);padding:15px 16px 10px 16px; position: relative;}
-/* 標題與標題列的刷新按鈕 */
-.title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-h1{margin:0;font-size:28px; line-height: 1.2;}
-.sub{color:var(--muted);font-size:14px; font-weight: normal;}
-/* 標題旁的重新整理按鈕 */
-.btn-reload {
-background: #f1f5f9; border: 1px solid var(--line); color: var(--muted);
-width: 36px; height: 36px; border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-font-size: 20px; cursor: pointer; transition: 0.2s;
+:root{
+  --paper:#FAF7F0;      /* 米色紙感底 */
+  --card:#FFFDF8;       /* 卡片（偏暖白）*/
+  --ink:#1A1A2E;        /* 藏青（主要文字）*/
+  --ink-soft:#4A4A5E;   /* 次要文字 */
+  --muted:#8A836F;      /* 說明灰（帶暖）*/
+  --gold:#C0912F;       /* 古金 */
+  --gold-lite:#D4A547;  /* 亮金 */
+  --wine:#8B2635;       /* 朱赭 */
+  --sage:#3F6B4E;       /* 沉靜墨綠（答對）*/
+  --line:#E6DCC5;       /* 暖色細線 */
+  --serif:"Songti TC","STSong","Noto Serif TC","SimSun",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei","Noto Sans TC","Segoe UI",sans-serif;
 }
-.btn-reload:active { background: #e2e8f0; transform: rotate(180deg); }
-/* 行間距 */
-.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-/* 2. 元件樣式 */
-button,select,input[type="text"]{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink);font-size:18px;cursor:pointer; appearance: none; -webkit-appearance: none;}
-input[type="text"]{cursor:text; width: 240px;}
-/* 修正 iOS 下拉選單箭頭消失問題 */
-select {
-background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-background-repeat: no-repeat;
-background-position: right 10px center;
-background-size: 12px;
-padding-right: 30px;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(192,145,47,.06), transparent 60%),
+    var(--paper);
+  font-size:18px;line-height:1.5;
 }
-.btn.brand{background:var(--brand);border-color:var(--brand);color:#fff}.btn.ghost{background:#fff}
-/* 統計標籤 */
-.badge{background:#f1f5f9;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:18px;}
-/* 分隔線 */
-.hr{height:1px;background:var(--line);margin:10px 0}
-/* 3. 題目與選項 */
-.question{font-size:25px; line-height:1.4; margin:10px 0 12px; font-weight: normal; color: var(--ink);}
-.opt{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:4px 0;font-size:22px;line-height:1.5;background:#fff;cursor:pointer}
-.opt:hover{background:#f8fafc}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 40px;min-height:100%}
+.hidden{display:none !important}
+
+/* 螢幕切換動效 */
+.screen{animation:fade .35s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen,.q-card.anim{animation:none}}
+
+/* 通用按鈕 */
+.btn{font-family:var(--sans);font-size:19px;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:12px;padding:12px 18px;cursor:pointer;transition:.15s;line-height:1.2}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--ink);color:#F7F2E6;border-color:var(--ink)}
+.btn-primary:hover{background:#26263f}
+.btn-gold{background:var(--card);color:var(--ink);border:1.5px solid var(--gold)}
+.btn-gold:hover{background:#FBF4E2}
+.btn-ghost{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+
+/* 金色細規線 */
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:14px 0}
+
+/* ============ 封面 ============ */
+.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  min-height:calc(100vh - 60px);padding:20px 0}
+.seal{width:78px;height:78px;border:2.5px solid var(--wine);border-radius:10px;color:var(--wine);
+  font-family:var(--serif);font-weight:700;display:flex;align-items:center;justify-content:center;
+  font-size:30px;letter-spacing:2px;line-height:1;transform:rotate(-3deg);
+  box-shadow:0 2px 0 rgba(139,38,53,.12);writing-mode:vertical-rl;padding:8px 4px}
+.cover-eyebrow{margin-top:26px;color:var(--gold);font-family:var(--serif);letter-spacing:.5em;
+  font-size:15px;padding-left:.5em}
+.cover-title{font-family:var(--serif);font-weight:700;color:var(--ink);font-size:52px;
+  letter-spacing:.08em;margin:10px 0 4px;line-height:1.15}
+.cover-line{width:70px;height:2px;background:var(--gold);margin:16px auto}
+.cover-sub{color:var(--ink-soft);font-size:18px;letter-spacing:.05em}
+.cover-enter{margin-top:34px;min-width:180px;font-size:20px;letter-spacing:.3em;padding-left:.3em}
+.cover-foot{margin-top:22px;color:var(--muted);font-size:14px;letter-spacing:.1em}
+
+/* ============ 章節頁 ============ */
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.head-title{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:.06em;color:var(--ink)}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+  color:var(--muted);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.icon-btn:active{transform:rotate(180deg)}
+.section-num{font-family:var(--serif);color:var(--gold);font-weight:700;font-size:19px;margin:18px 0 8px;letter-spacing:.08em}
+.section-num small{color:var(--muted);font-weight:400;font-family:var(--sans);font-size:14px;letter-spacing:0;margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;font-size:19px;cursor:pointer;transition:.15s;color:var(--ink-soft)}
+.chip.on{background:#F3ECDA;border-color:var(--gold);color:var(--ink);font-weight:500}
+.chip .tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:flex;
+  align-items:center;justify-content:center;font-size:13px;color:transparent;background:#fff;flex-shrink:0}
+.chip.on .tick{background:var(--gold);border-color:var(--gold);color:#fff}
+.kw{width:100%;font-family:var(--sans);font-size:19px;border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;background:var(--card);color:var(--ink)}
+.kw::placeholder{color:var(--muted)}
+.controls{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.ctrl{flex:1;min-width:130px}
+.ctrl label{display:block;font-size:15px;color:var(--muted);margin-bottom:5px;letter-spacing:.1em}
+.sel{width:100%;font-family:var(--sans);font-size:19px;border:1px solid var(--line);border-radius:12px;
+  padding:11px 34px 11px 14px;background:var(--card);color:var(--ink);cursor:pointer;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292%22%20height%3D%22292%22%3E%3Cpath%20fill%3D%22%23C0912F%22%20d%3D%22M287%2069a18%2018%200%200%200-13-5H18a18%2018%200%200%200-13%2031l128%20128a18%2018%200%200%200%2026%200L287%2095a18%2018%200%200%200%200-26z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:12px}
+.actions{display:flex;gap:12px;margin-top:22px}
+.actions .btn{flex:1;font-size:20px;letter-spacing:.15em;padding:14px 8px}
+.exam-hint{margin-top:14px;color:var(--muted);font-size:14px;line-height:1.6;
+  border-left:2px solid var(--gold);padding:2px 0 2px 12px}
+
+/* ============ 作答 ============ */
+.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.mode-tag{font-family:var(--serif);font-size:16px;letter-spacing:.15em;color:var(--wine);font-weight:700}
+.mode-tag.practice{color:var(--gold)}
+.progress-txt{font-size:15px;color:var(--muted);letter-spacing:.05em}
+.bar{height:4px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:20px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-lite));width:0;transition:width .3s}
+.q-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px;
+  box-shadow:0 6px 24px rgba(26,26,46,.05)}
+.q-card.anim{animation:rise .3s ease}
+.q-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.q-seal{width:44px;height:44px;flex-shrink:0;border:2px solid var(--wine);border-radius:9px;color:var(--wine);
+  font-family:var(--serif);font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;
+  transform:rotate(-2deg);line-height:1}
+.q-type{font-family:var(--serif);font-size:15px;letter-spacing:.1em;color:var(--ink-soft);
+  border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.q-text{font-size:24px;line-height:1.6;color:var(--ink);margin-bottom:16px}
+.opt{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:14px;
+  padding:13px 15px;margin:9px 0;font-size:22px;line-height:1.5;background:#fff;cursor:pointer;transition:.12s;color:var(--ink)}
+.opt:hover{border-color:var(--gold)}
 .opt.locked{cursor:default}
-.opt.locked:hover{background:#fff}
-.opt.correct{border-color:var(--ok);background:#f0fdf4}.opt.wrong{border-color:var(--bad);background:#fef2f2}
-.opt.correct:hover{background:#f0fdf4}.opt.wrong:hover{background:#fef2f2}
-.opt input { width: 21px; height: 21px; margin-top: 5px; cursor: pointer; flex-shrink: 0; }
-.opt input:disabled { cursor: default; }
-/* 作答回饋與解析（放大字級） */
-.feedback{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:22px;line-height:1.7;background:#f8fafc}
-.feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}
-.s-fbAns,.s-fbExp{font-size:22px;line-height:1.7;margin-top:4px}
-/* 錯題清單解析（與選項同大小） */
-.exp{font-size:22px;color:var(--muted);line-height:1.7}
-.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);background:#eef2ff;border-radius:999px;font-size:18px;cursor:pointer}
-.chip input{width:18px;height:18px;cursor:pointer}
-.report{margin-top:12px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px}
-.hidden{display:none}
-/* 排版輔助 */
-.control-group { display: flex; gap: 8px; align-items: center; }
-.ctrl-item { display: flex; align-items: center; gap: 6px; }
-.btn-group { display: flex; gap: 8px; }
-.step-title { font-size: 18px; font-weight: bold; }
-/* 4. 手機版專屬設定 */
-@media(max-width:600px){
-h1{font-size:26px}
-.question{font-size:24px}
-.opt{font-size:23px}
-.feedback{font-size:23px}
-.s-fbAns,.s-fbExp{font-size:23px}
-.exp{font-size:23px}
-input[type="text"]{width:100%; font-size: 20px;}
-select { font-size: 20px; }
-.step-title{font-size:21px}
-.chip{font-size:21px}
-.stats-row {
-display: grid !important;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 4px;
-width: 100%;
-}
-.stats-row .badge {
-font-size: 18px;
-padding: 6px 2px;
-text-align: center;
-margin: 0;
-white-space: nowrap;
-display: flex;
-justify-content: center;
-align-items: center;
-}
-.control-group { width: 100%; display: flex; justify-content: space-between; gap: 6px; }
-.ctrl-item { flex: 1; flex-direction: row; align-items: center; justify-content: flex-start; }
-.ctrl-item label { font-size: 19px; white-space: nowrap; }
-.ctrl-item select { width: 100%; }
-.btn-group { width: 100%; margin-top: 6px; gap: 6px; }
-.s-start, .s-finish { padding: 10px 2px; font-size: 20px; flex: 1; white-space: nowrap; }
-.s-finish { flex: 1.2; letter-spacing: -0.5px; }
+.opt.locked:hover{border-color:var(--line)}
+.opt .mk{width:26px;height:26px;flex-shrink:0;margin-top:1px;border-radius:50%;border:1.5px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent}
+.opt.sel .mk{border-color:var(--ink);background:var(--ink);color:#F7F2E6}
+.opt.correct{border-color:var(--sage);background:#F0F5F0}
+.opt.correct .mk{border-color:var(--sage);background:var(--sage);color:#fff}
+.opt.wrong{border-color:var(--wine);background:#FBF1F1}
+.opt.wrong .mk{border-color:var(--wine);background:var(--wine);color:#fff}
+.feedback{margin-top:16px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;
+  padding:14px 16px;font-size:22px;line-height:1.7;background:#FBF6EA}
+.feedback.ok{border-left-color:var(--sage)}
+.feedback.bad{border-left-color:var(--wine)}
+.fb-title{font-weight:700;font-family:var(--serif);letter-spacing:.05em;font-size:22px}
+.feedback.ok .fb-title{color:var(--sage)}
+.feedback.bad .fb-title{color:var(--wine)}
+.fb-ans,.fb-exp{font-size:22px;line-height:1.7;margin-top:6px;color:var(--ink-soft)}
+.nav{display:flex;gap:10px;margin-top:18px;align-items:center}
+.nav .btn{padding:12px 16px;font-size:18px}
+.nav .s-prev,.nav .s-next{flex:1}
+.nav .s-nav-reset{margin-left:auto;color:var(--muted)}
+
+/* ============ 成績 ============ */
+.result-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 20px;
+  box-shadow:0 6px 24px rgba(26,26,46,.05)}
+.result-title{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:.06em;color:var(--ink);text-align:center}
+.score-big{font-family:var(--serif);font-size:60px;font-weight:700;color:var(--gold);text-align:center;line-height:1;margin:18px 0 4px}
+.score-big small{font-size:22px;color:var(--muted);font-weight:400;font-family:var(--sans)}
+.score-meta{text-align:center;color:var(--ink-soft);font-size:18px;letter-spacing:.05em}
+.wrong-head{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--wine);margin:22px 0 6px;letter-spacing:.05em}
+.wrong-item{border-top:1px solid var(--line);padding:14px 0}
+.wrong-q{font-size:20px;line-height:1.6;color:var(--ink);font-weight:500}
+.wrong-ans{color:var(--sage);font-size:19px;margin-top:6px}
+.wrong-exp{color:var(--muted);font-size:22px;line-height:1.7;margin-top:4px}
+.result-actions{display:flex;gap:12px;margin-top:24px}
+.result-actions .btn{flex:1;font-size:19px;letter-spacing:.1em}
+.allright{text-align:center;color:var(--sage);font-size:22px;font-family:var(--serif);margin-top:18px}
+
+/* 桌機微調 */
+@media(min-width:700px){
+  .cover-title{font-size:64px}
+  .q-text{font-size:26px}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-<div class="card">
-<div class="title-row">
-<h1>114(下)起信論期末考刷題小程序 <span class="sub">— 雲端版</span></h1>
-<button class="btn-reload" onclick="forceReload()" title="檢查更新">↻</button>
-</div>
-</div>
-<div class="card" id="panel-student">載入題庫中...</div>
-</div>
+<div class="wrap" id="app">載入題庫中…</div>
 
 <script>
-const $ = s => document.querySelector(s);
+const $  = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 const isArray = Array.isArray;
 
 function normalize(a){ if(a==null) return []; return isArray(a)? [...a].sort((x,y)=>x-y) : [a]; }
 function same(a,b){ a=normalize(a); b=normalize(b); return a.length===b.length && a.every((v,i)=>v===b[i]); }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function sectionLabel(s){ return String(s).replace(/^\d+(-\d+)?\s+/, ''); }   // 去章節編號（僅顯示）
 
-// HTML 跳脫（避免題目/選項/解析中的特殊字元破壞版面）
-function esc(s){
-  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+const isMobile = () => window.matchMedia('(max-width:680px)').matches;
+function scrollTop(){ window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'}); }
+function scrollToEl(sel, block){ if(!isMobile()) return; const e=$(sel); if(e) e.scrollIntoView({behavior:'smooth', block}); }
 
-// 章節顯示：去掉開頭的編號（例：「08 心生滅門－2」→「心生滅門－2」）
-// 只影響顯示，篩選仍用完整的 section 值
-function sectionLabel(s){
-  return String(s).replace(/^\d+(-\d+)?\s+/, '');
-}
-
-// 手機（窄螢幕）才自動捲動，減少上下滑動
-const isMobile = () => window.matchMedia('(max-width:600px)').matches;
-function scrollToQuestion(root){
-  if(!isMobile()) return;
-  const q = root.querySelector('.s-q');
-  if(q) q.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function scrollToAnswer(root){
-  if(!isMobile()) return;
-  const fb = root.querySelector('.s-fb');
-  if(fb) fb.scrollIntoView({behavior:'smooth', block:'center'});
-}
-function scrollToNav(root){
-  if(!isMobile()) return;
-  const nav = root.querySelector('.s-nav');
-  if(nav) nav.scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-// 強制刷新函式
-function forceReload() {
-  if(confirm("確定要重新整理並檢查更新嗎？\n(將會清除當前作答進度)")) {
-    window.location.reload();
-  }
+function forceReload(){
+  if(confirm("重新整理並檢查題庫更新？\n（會清除目前作答進度）")) window.location.reload();
 }
 
 let BANK = [];
+const ST = { paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}, examMode:false };
+let APP;
 
 async function init(){
-  try {
-    const r = await fetch('questions.json', { cache: 'no-store' });
+  try{
+    const r = await fetch('questions.json', { cache:'no-store' });
     if(!r.ok) throw new Error('讀取失敗');
     BANK = await r.json();
-    mountStudent('#panel-student');
-  } catch(e) {
-    $('#panel-student').innerHTML = `<p style="color:red">無法讀取題庫，請確認 questions.json 是否已上傳。</p>`;
+    buildApp();
+  }catch(e){
+    $('#app').innerHTML = `<div class="q-card" style="margin-top:40px;color:var(--wine)">
+      無法讀取題庫。請確認 questions.json 已上傳，再重新整理頁面。</div>`;
   }
 }
 
-function mountStudent(selector){
-  const el = $(selector);
-  el.innerHTML=`
-<div class="row stats-row">
-<div class="badge"><b class="s-total">${BANK.length}</b> 題</div>
-<div class="badge">目前 <b class="s-progress">0/0</b></div>
-<div class="badge">答對 <b class="s-right">0</b></div>
-</div>
-<div class="hr"></div>
-<div class="row">
-<div class="step-title">1. 選擇章節：</div>
-<div class="chips s-sections"></div>
-</div>
-<div class="row" style="margin-top:8px">
-<div class="step-title">2. 關鍵字搜尋：</div>
-<input type="text" class="s-keyword" placeholder="輸入關鍵字 (題目或選項)...">
-</div>
-<div class="hr"></div>
-<div class="row" style="flex-direction: column; align-items: stretch; gap: 8px;">
-<div class="control-group">
-<div class="ctrl-item">
-<label>模式</label>
-<select class="s-mode"><option value="order">依順序</option><option value="shuffle">隨機</option></select>
-</div>
-<div class="ctrl-item">
-<label>題數</label>
-<select class="s-count">
-<option value="all" selected>全部</option>
-<option value="10">10</option>
-<option value="20">20</option>
-<option value="50">50</option>
-</select>
-</div>
-</div>
-<div class="btn-group">
-<button class="btn brand s-start">開始作答</button>
-<button class="btn ghost s-finish">模擬測驗</button>
-</div>
-</div>
-<div class="hr"></div>
-<div class="question s-q">請選擇條件後，按「開始作答」</div>
-<div class="s-optBox"></div>
-<div class="feedback s-fb hidden">
-<div class="s-fbTitle" style="font-weight:bold"></div>
-<div class="s-fbAns"></div>
-<div class="s-fbExp"></div>
-</div>
-<div class="nav hidden s-nav">
-<button class="btn s-prev">← 上一題</button>
-<button class="btn s-next">下一題 →</button>
-<button class="btn s-nav-reset">重置</button>
-</div>
-<div class="report hidden s-report"></div>
+function buildApp(){
+  APP = $('#app');
+  const tfN = BANK.filter(q => (q.options||[]).length===2).length;
+  const mcN = BANK.filter(q => (q.options||[]).length>2).length;
+
+  APP.innerHTML = `
+<!-- 封面 -->
+<section class="screen cover" id="screen-cover">
+  <div class="seal">起信</div>
+  <div class="cover-eyebrow">大乘經論 · 期末研習</div>
+  <h1 class="cover-title">大乘起信論</h1>
+  <div class="cover-line"></div>
+  <div class="cover-sub">114 學年下學期 · 期末考刷題</div>
+  <button class="btn btn-primary cover-enter" id="btn-enter">進入</button>
+  <div class="cover-foot">全題庫 ${BANK.length} 題 · 是非 ${tfN}、選擇 ${mcN}</div>
+</section>
+
+<!-- 章節頁 -->
+<section class="screen hidden" id="screen-select">
+  <div class="head">
+    <div class="head-title">選擇範圍</div>
+    <button class="icon-btn" title="檢查更新" onclick="forceReload()">↻</button>
+  </div>
+  <div class="rule"></div>
+
+  <div class="section-num">一、選擇章節</div>
+  <div class="chips s-sections"></div>
+
+  <div class="section-num">二、關鍵字 <small>選填，可搜題目或選項</small></div>
+  <input type="text" class="kw s-keyword" placeholder="輸入關鍵字…">
+
+  <div class="controls">
+    <div class="ctrl">
+      <label>出題順序</label>
+      <select class="sel s-mode"><option value="order">依原順序</option><option value="shuffle">隨機打亂</option></select>
+    </div>
+    <div class="ctrl">
+      <label>題數</label>
+      <select class="sel s-count">
+        <option value="all" selected>全部</option>
+        <option value="10">10 題</option>
+        <option value="20">20 題</option>
+        <option value="50">50 題</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary s-start">開始練習</button>
+    <button class="btn btn-gold s-finish">模擬測驗</button>
+  </div>
+  <div class="exam-hint">模擬測驗：全題庫隨機抽 25 是非題＋25 選擇題，作答時不顯示解答，交卷後計分（每題 2 分，滿分 100）並列出錯題。</div>
+</section>
+
+<!-- 作答 -->
+<section class="screen hidden" id="screen-quiz">
+  <div class="quiz-top">
+    <span class="mode-tag s-modetag"></span>
+    <span class="progress-txt">第 <b class="s-progress">0/0</b> 題</span>
+  </div>
+  <div class="bar"><i class="s-barfill"></i></div>
+
+  <div class="q-card" id="q-card">
+    <div class="q-head">
+      <div class="q-seal s-seal">1</div>
+      <div class="q-type s-qtype">是非題</div>
+    </div>
+    <div class="q-text s-q"></div>
+    <div class="s-optBox"></div>
+    <div class="feedback s-fb hidden">
+      <div class="fb-title s-fbTitle"></div>
+      <div class="fb-ans s-fbAns"></div>
+      <div class="fb-exp s-fbExp"></div>
+    </div>
+  </div>
+
+  <div class="nav s-nav">
+    <button class="btn btn-ghost s-prev">← 上一題</button>
+    <button class="btn btn-ghost s-next">下一題 →</button>
+    <button class="btn btn-ghost s-nav-reset">重置</button>
+  </div>
+</section>
+
+<!-- 成績 -->
+<section class="screen hidden" id="screen-result">
+  <div class="result-card s-report"></div>
+</section>
 `;
 
-  const state = {paper:[], idx:0, right:0, user:{}, revealed:{}, firstScored:{}, examMode:false};
-  el._state = state;
+  // 章節鈕（自訂勾選外觀，value 存完整章節名，顯示去前綴）
+  const secs = [...new Set(BANK.map(q => q.section || '未分類'))];
+  $('.s-sections', APP).innerHTML = secs.map(s => `
+    <span class="chip on" data-val="${esc(s)}"><span class="tick">✓</span>${esc(sectionLabel(s))}</span>
+  `).join('');
+  $$('.s-sections .chip', APP).forEach(c => c.onclick = () => c.classList.toggle('on'));
 
-  const secs = [...new Set(BANK.map(q => q.section||'未分類'))];
-  el.querySelector('.s-sections').innerHTML = secs.map(s => `
-<label class="chip"><input type="checkbox" value="${esc(s)}" checked> ${esc(sectionLabel(s))}</label>
-`).join('');
+  // 綁定事件
+  $('#btn-enter', APP).onclick   = () => showScreen('select');
+  $('.s-start', APP).onclick     = () => start();
+  $('.s-finish', APP).onclick    = () => startExam();
+  $('.s-nav-reset', APP).onclick = () => gotoSelect();
+  $('.s-prev', APP).onclick      = () => { if(ST.idx>0){ ST.idx--; render(); } };
+  $('.s-next', APP).onclick      = () => { if(ST.idx < ST.paper.length-1){ ST.idx++; render(); } else { showReport(); } };
 
-  el.querySelector('.s-start').onclick = () => start(el);
-  el.querySelector('.s-finish').onclick = () => startExam(el);   // 模擬測驗
-  el.querySelector('.s-nav-reset').onclick = () => mountStudent(selector);  // 中途重置
-  el.querySelector('.s-prev').onclick = () => { if(state.idx>0){ state.idx--; render(el); } };
-  el.querySelector('.s-next').onclick = () => {
-    if(state.idx < state.paper.length-1){ state.idx++; render(el); }
-    else { showReport(el); }
-  };
+  showScreen('cover');
 }
 
-// 隱藏並清空上一輪的成績報表與回饋（避免舊分數殘留）
-function resetOutputs(root){
-  const rep = root.querySelector('.s-report');
-  rep.classList.add('hidden');
-  rep.innerHTML = '';
-  root.querySelector('.s-fb').classList.add('hidden');
+function showScreen(name){
+  ['cover','select','quiz','result'].forEach(n => {
+    $('#screen-'+n, APP).classList.toggle('hidden', n!==name);
+  });
+  scrollTop();
 }
 
-// 一般練習：依章節/關鍵字/模式/題數作答，作答後顯示對錯與解析
-function start(root){
-  const st = root._state;
-  const mode = root.querySelector('.s-mode').value;
-  const wantStr = root.querySelector('.s-count').value;
-  const keyword = root.querySelector('.s-keyword').value.trim().toLowerCase();
-  const chosen = [...root.querySelectorAll('.s-sections input:checked')].map(i=>i.value);
-  if(!chosen.length) return alert('請至少勾選一個章節');
+function resetRun(){
+  ST.paper=[]; ST.idx=0; ST.right=0; ST.user={}; ST.revealed={}; ST.firstScored={}; ST.examMode=false;
+}
+function gotoSelect(){ resetRun(); showScreen('select'); }
 
-  let pool = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section||'未分類'));
+// ===== 一般練習 =====
+function start(){
+  const mode    = $('.s-mode', APP).value;
+  const wantStr = $('.s-count', APP).value;
+  const keyword = $('.s-keyword', APP).value.trim().toLowerCase();
+  const chosen  = $$('.s-sections .chip.on', APP).map(c => c.dataset.val);
+  if(!chosen.length) return alert('請至少選擇一個章節');
 
-  // 搜尋邏輯：題目 + 選項 (不含解析)
-  if(keyword) {
-    pool = pool.filter(item => {
-      const qText = (item.q.question || "").toLowerCase();
-      const optsText = (item.q.options || []).join(" ").toLowerCase();
-      return qText.includes(keyword) || optsText.includes(keyword);
+  let pool = BANK.map((q,i)=>({q,i})).filter(x => chosen.includes(x.q.section || '未分類'));
+  if(keyword){
+    pool = pool.filter(x => {
+      const t = (x.q.question||'').toLowerCase();
+      const o = (x.q.options||[]).join(' ').toLowerCase();
+      return t.includes(keyword) || o.includes(keyword);
     });
   }
+  let idxs = pool.map(x=>x.i);
+  if(!idxs.length) return alert(keyword ? `找不到包含「${keyword}」的題目。` : '所選章節沒有題目');
 
-  const poolIdx = pool.map(x=>x.i);
-  if(!poolIdx.length) {
-    if(keyword) return alert(`在選定的章節中，找不到包含「${keyword}」的題目。`);
-    return alert('所選章節目前沒有題目');
-  }
+  if(mode==='shuffle') idxs = shuffle(idxs);
+  const want = (wantStr==='all') ? idxs.length : Math.min(parseInt(wantStr), idxs.length);
 
-  let list = (mode==='shuffle') ? shuffle(poolIdx) : poolIdx;
-  const want = (wantStr==='all') ? list.length : Math.min(parseInt(wantStr), list.length);
-  st.paper = list.slice(0, want);
-  st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
-  st.examMode = false;
-
-  resetOutputs(root);                              // 開始作答即重置舊成績
-  root.querySelector('.s-nav').classList.remove('hidden');
-  render(root);
+  resetRun();
+  ST.paper = idxs.slice(0, want);
+  ST.examMode = false;
+  showScreen('quiz');
+  render();
 }
 
-// 模擬測驗：全題庫隨機抽 25 是非題 + 25 選擇題，作答不顯示解析，答完出成績
-function startExam(root){
-  const st = root._state;
+// ===== 模擬測驗：全題庫隨機 25 是非 + 25 選擇 =====
+function startExam(){
+  const tf=[], mc=[];
+  BANK.forEach((q,i) => { ((q.options||[]).length===2 ? tf : mc).push(i); });
+  if(!tf.length && !mc.length) return alert('題庫是空的');
 
-  const tfIdx = [];
-  const mcIdx = [];
-  BANK.forEach((q,i) => {
-    const n = (q.options || []).length;
-    if(n === 2) tfIdx.push(i); else mcIdx.push(i);
-  });
-  if(!tfIdx.length && !mcIdx.length) return alert('題庫是空的');
-
-  const tfPick = shuffle(tfIdx).slice(0, Math.min(25, tfIdx.length));
-  const mcPick = shuffle(mcIdx).slice(0, Math.min(25, mcIdx.length));
-
-  if(tfPick.length < 25 || mcPick.length < 25){
-    const ok = confirm(`題庫數量不足 25＋25（目前是非題 ${tfPick.length} 題、選擇題 ${mcPick.length} 題）。\n仍要以現有題數進行模擬測驗嗎？`);
-    if(!ok) return;
+  const tfPick = shuffle(tf).slice(0, Math.min(25, tf.length));
+  const mcPick = shuffle(mc).slice(0, Math.min(25, mc.length));
+  if(tfPick.length<25 || mcPick.length<25){
+    if(!confirm(`題庫不足 25＋25（目前是非 ${tfPick.length}、選擇 ${mcPick.length}）。\n仍以現有題數進行模擬測驗嗎？`)) return;
   }
 
-  st.paper = [...tfPick, ...mcPick];   // 是非題在前、選擇題在後
-  st.idx = 0; st.right = 0; st.user = {}; st.revealed = {}; st.firstScored = {};
-  st.examMode = true;
-
-  resetOutputs(root);
-  root.querySelector('.s-nav').classList.remove('hidden');
-  render(root);
+  resetRun();
+  ST.paper = [...tfPick, ...mcPick];   // 是非在前、選擇在後
+  ST.examMode = true;
+  showScreen('quiz');
+  render();
 }
 
-function render(root){
-  const st = root._state;
-  const pi = st.paper[st.idx];
-  const q = BANK[pi];
+function render(){
+  const pi = ST.paper[ST.idx];
+  const q  = BANK[pi];
+  const total = ST.paper.length;
+  const isTF = (q.options||[]).length===2;
 
-  root.querySelector('.s-progress').textContent = `${st.idx+1}/${st.paper.length}`;
-  root.querySelector('.s-right').textContent = st.examMode ? '—' : st.right;  // 模擬測驗不即時顯示答對數
-  root.querySelector('.s-q').textContent = q.question;
+  $('.s-modetag', APP).textContent = ST.examMode ? '模擬測驗' : '章節練習';
+  $('.s-modetag', APP).className = 'mode-tag s-modetag' + (ST.examMode ? '' : ' practice');
+  $('.s-progress', APP).textContent = `${ST.idx+1}/${total}`;
+  $('.s-barfill', APP).style.width = ((ST.idx+1)/total*100) + '%';
+  $('.s-seal', APP).textContent = ST.idx+1;
+  $('.s-qtype', APP).textContent = isTF ? '是非題' : '選擇題';
+  $('.s-q', APP).textContent = q.question;
 
-  const box = root.querySelector('.s-optBox');
+  const card = $('#q-card', APP);
+  card.classList.remove('anim'); void card.offsetWidth; card.classList.add('anim');
+
+  const box = $('.s-optBox', APP);
   box.innerHTML = '';
-
   const correct = normalize(q.answer);
   const isMulti = correct.length > 1;
-  const cur = normalize(st.user[pi]);
-  const locked = !!st.revealed[pi];   // 已作答 → 鎖定，不可再改
+  const cur = normalize(ST.user[pi]);
+  const locked = !!ST.revealed[pi];
 
   (q.options||[]).forEach((opt, i) => {
-    const row = document.createElement('label');
-    row.className = 'opt' + (locked ? ' locked' : '');
+    const row = document.createElement('div');
+    row.className = 'opt' + (locked ? ' locked' : '') + (cur.includes(i) ? ' sel' : '');
+    row.innerHTML = `<span class="mk">${cur.includes(i)?'●':''}</span><span>${esc(opt)}</span>`;
 
-    const ip = document.createElement('input');
-    ip.type = isMulti ? 'checkbox' : 'radio';
-    ip.name = 'q_opt';
-    ip.checked = cur.includes(i);
-    ip.disabled = locked;
-
-    row.onclick = (e) => {
-      if(st.revealed[pi]) return;   // 已作答 → 鎖定，一律忽略後續點擊
-      if(e.target !== ip) ip.checked = !ip.checked;
-
-      let now = new Set(normalize(st.user[pi]));
+    row.onclick = () => {
+      if(ST.revealed[pi]) return;                 // 已作答 → 鎖定
+      let now;
       if(isMulti){
-        if(ip.checked) now.add(i); else now.delete(i);
+        now = new Set(normalize(ST.user[pi]));
+        now.has(i) ? now.delete(i) : now.add(i);
       } else {
         now = new Set([i]);
-        box.querySelectorAll('input').forEach((inp, idx) => { if(idx!==i) inp.checked=false; });
       }
-      st.user[pi] = [...now].sort((a,b)=>a-b);
+      ST.user[pi] = [...now].sort((a,b)=>a-b);
 
-      // 單選：一選即定案；多選：選滿正解數量即定案
-      if(!isMulti || st.user[pi].length >= correct.length){
-        st.revealed[pi] = true;
-        // 一般練習才即時計分並更新答對數；模擬測驗於交卷時才結算
-        if(!st.examMode && same(st.user[pi], q.answer) && !st.firstScored[pi]){
-          st.right++; st.firstScored[pi]=true;
-          root.querySelector('.s-right').textContent = st.right;
+      // 單選一選即定；多選選滿正解數量即定
+      if(!isMulti || ST.user[pi].length >= correct.length){
+        ST.revealed[pi] = true;
+        if(!ST.examMode && same(ST.user[pi], q.answer) && !ST.firstScored[pi]){
+          ST.right++; ST.firstScored[pi] = true;
         }
-        // 鎖定本題所有選項，之後不可修改
-        box.querySelectorAll('input').forEach(inp => inp.disabled = true);
-        box.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
-        refreshUI(root, q, pi);
-        // 手機自動捲動：練習→捲到解答；模擬測驗→捲到下一題按鈕
-        if(st.examMode) scrollToNav(root); else scrollToAnswer(root);
+        refreshUI(q, pi);
+        if(ST.examMode) scrollToEl('.s-nav','center'); else scrollToEl('.s-fb','center');
+      } else {
+        // 多選未選滿：僅更新勾選外觀
+        markSelected(box, ST.user[pi]);
       }
     };
-
-    row.append(ip, document.createTextNode(" " + opt));
     box.append(row);
   });
 
-  refreshUI(root, q, pi);
-  scrollToQuestion(root);   // 手機：換題後自動捲到題目
+  refreshUI(q, pi);
+  scrollToEl('.s-q','start');   // 手機：換題捲到題目
 }
 
-function refreshUI(root, q, pi){
-  const st = root._state;
-  const fb = root.querySelector('.s-fb');
+function markSelected(box, arr){
+  $$('.opt', box).forEach((row,i) => {
+    const on = arr.includes(i);
+    row.classList.toggle('sel', on);
+    row.querySelector('.mk').textContent = on ? '●' : '';
+  });
+}
 
-  // 模擬測驗：作答過程一律不顯示對錯與解析
-  if(st.examMode){
-    fb.classList.add('hidden');
-    return;
-  }
+function refreshUI(q, pi){
+  const fb = $('.s-fb', APP);
 
-  const isRev = st.revealed[pi];
-  const uAns = normalize(st.user[pi]);
+  if(ST.examMode){ fb.classList.add('hidden'); return; }   // 模擬測驗不顯示解答
+
+  if(!ST.revealed[pi]){ fb.classList.add('hidden'); return; }
+
+  const uAns = normalize(ST.user[pi]);
   const correct = normalize(q.answer);
   const ok = same(uAns, q.answer);
 
-  if(isRev){
-    fb.classList.remove('hidden');
-    fb.className = `feedback s-fb ${ok?'ok':'bad'}`;
-    root.querySelector('.s-fbTitle').textContent = ok ? '答對了 ✅' : '答錯了 ❌';
-    const ansText = correct.map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
-    root.querySelector('.s-fbAns').textContent = '正確答案：' + ansText;
-    root.querySelector('.s-fbExp').textContent = q.explanation ? '解析：' + q.explanation : '';
-    root.querySelectorAll('.opt').forEach((row, i) => {
-      row.classList.remove('correct','wrong');
-      if(correct.includes(i)) row.classList.add('correct');
-      else if(uAns.includes(i)) row.classList.add('wrong');
-    });
+  fb.className = 'feedback s-fb ' + (ok?'ok':'bad');
+  $('.s-fbTitle', APP).textContent = ok ? '答對了' : '答錯了';
+  const ansText = correct.map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join('、');
+  $('.s-fbAns', APP).textContent = '正解：' + ansText;
+  $('.s-fbExp', APP).textContent = q.explanation ? '解析：' + q.explanation : '';
+
+  // 鎖定並標示對錯
+  $$('.opt', APP).forEach((row,i) => {
+    row.classList.add('locked');
+    row.classList.remove('correct','wrong');
+    if(correct.includes(i)) row.classList.add('correct');
+    else if(uAns.includes(i)) row.classList.add('wrong');
+  });
+}
+
+function showReport(){
+  const total = ST.paper.length;
+  const correctCount = ST.paper.filter(pi => same(ST.user[pi], BANK[pi].answer)).length;
+  const wrong = ST.paper.filter(pi => !same(ST.user[pi], BANK[pi].answer));
+  const box = $('.s-report', APP);
+
+  let scoreBlock;
+  if(ST.examMode){
+    // 每題 2 分，滿分＝題數×2
+    scoreBlock = `
+      <div class="result-title">模擬測驗結果</div>
+      <div class="score-big">${correctCount*2}<small> / ${total*2} 分</small></div>
+      <div class="score-meta">答對 ${correctCount} / ${total} 題</div>`;
   } else {
-    fb.classList.add('hidden');
+    scoreBlock = `
+      <div class="result-title">練習完成</div>
+      <div class="score-big">${correctCount}<small> / ${total}</small></div>
+      <div class="score-meta">正確率 ${total>0 ? Math.round(correctCount/total*100) : 0}%</div>`;
   }
-}
 
-function showReport(root){
-  const st = root._state;
-  const box = root.querySelector('.s-report');
-  box.classList.remove('hidden');
+  const wrongBlock = wrong.length===0
+    ? `<div class="allright">全部答對，隨喜讚歎 🌿</div>`
+    : `<div class="wrong-head">錯題複習（${wrong.length}）</div>` +
+      wrong.map(pi => {
+        const q = BANK[pi];
+        const ansText = normalize(q.answer).map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join('、');
+        return `<div class="wrong-item">
+          <div class="wrong-q">${esc(q.question)}</div>
+          <div class="wrong-ans">正解：${esc(ansText)}</div>
+          <div class="wrong-exp">解析：${esc(q.explanation||'無')}</div>
+        </div>`;
+      }).join('');
 
-  const total = st.paper.length;
-  const correctCount = st.paper.filter(pi => same(st.user[pi], BANK[pi].answer)).length;
-  const wrongList = st.paper.filter(pi => !same(st.user[pi], BANK[pi].answer));
-  const heading = st.examMode ? '模擬測驗結果' : '本次練習已完成';
+  box.innerHTML = scoreBlock + `<div class="rule"></div>` + wrongBlock + `
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="gotoSelect()">再選一次</button>
+      <button class="btn btn-ghost" onclick="showScreen('cover')">回封面</button>
+    </div>`;
 
-  // 模擬測驗：每題 2 分，顯示得分（滿分＝題數×2），不顯示正確率
-  const scoreLine = st.examMode
-    ? `<span class="chip">得分：${correctCount*2} / ${total*2} 分</span> <span class="chip">答對：${correctCount} / ${total}</span>`
-    : `<span class="chip">答對：${correctCount} / ${total}</span> <span class="chip">正確率：${total > 0 ? Math.round(correctCount/total*100) : 0}%</span>`;
-
-  box.innerHTML = `
-<h2 style="color:#3b82f6; margin-top:0">${heading}</h2>
-<div style="margin-bottom:15px; font-size:18px;">
-${scoreLine}
-</div>
-${wrongList.length===0 ? '<p style="font-size:20px; color:#16a34a">全對！太棒了 🎉</p>' :
-`<details open><summary>錯題清單 (${wrongList.length})</summary>
-<ul>${wrongList.map(pi => {
-  const q = BANK[pi];
-  const ansText = normalize(q.answer).map(i => (q.options && q.options[i]) ? q.options[i] : ['A','B','C','D'][i]).join(', ');
-  return `<li style="margin-bottom:14px">
-<b>${esc(q.question)}</b><br>
-<span style="color:#16a34a">正解：${esc(ansText)}</span><br>
-<span class="exp">解析：${esc(q.explanation||'無')}</span>
-</li>`;
-}).join('')}</ul></details>`
-}
-<div style="margin-top:20px">
-<button class="btn brand" onclick="mountStudent('#panel-student')">再練習一次</button>
-</div>
-`;
-
-  root.querySelector('.s-nav').classList.add('hidden');
-  root.querySelector('.s-optBox').innerHTML = '';
-  root.querySelector('.s-q').textContent = '';
+  showScreen('result');
 }
 
 init();
 
-// 註冊 Service Worker
+// Service Worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(reg => console.log('SW registered!', reg))
-    .catch(err => console.log('SW failed', err));
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 </script>
 </body>
