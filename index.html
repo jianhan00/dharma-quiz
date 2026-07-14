@@ -98,6 +98,9 @@ body{
   appearance:none;-webkit-appearance:none;
   background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292%22%20height%3D%22292%22%3E%3Cpath%20fill%3D%22%23C0912F%22%20d%3D%22M287%2069a18%2018%200%200%200-13-5H18a18%2018%200%200%200-13%2031l128%20128a18%2018%200%200%200%2026%200L287%2095a18%2018%200%200%200%200-26z%22%2F%3E%3C%2Fsvg%3E");
   background-repeat:no-repeat;background-position:right 12px center;background-size:12px}
+.kw-hint{margin-top:10px;font-size:17px;line-height:1.5;letter-spacing:.03em;font-weight:500}
+.kw-hint.ok{color:var(--gold)}
+.kw-hint.bad{color:var(--wine)}
 .actions{display:flex;gap:12px;margin-top:22px}
 .actions .btn{flex:1;font-size:22px;letter-spacing:.12em;padding:15px 8px}
 .exam-hint{margin-top:14px;color:var(--muted);font-size:14px;line-height:1.6;
@@ -266,6 +269,7 @@ function buildApp(){
 
   <div class="section-num">二、關鍵字 <small>選填，可搜題目或選項</small></div>
   <input type="text" class="kw s-keyword" placeholder="輸入關鍵字…">
+  <div class="kw-hint s-kwhint hidden"></div>
 
   <div class="controls">
     <div class="ctrl">
@@ -330,10 +334,11 @@ function buildApp(){
   $('.s-sections', APP).innerHTML = secs.map(s => `
     <span class="chip on" data-val="${esc(s)}"><span class="tick">✓</span>${esc(sectionLabel(s))}</span>
   `).join('');
-  $$('.s-sections .chip', APP).forEach(c => c.onclick = () => c.classList.toggle('on'));
+  $$('.s-sections .chip', APP).forEach(c => c.onclick = () => { c.classList.toggle('on'); updateKwHint(); });
 
   // 綁定事件
   $('#btn-enter', APP).onclick   = () => showScreen('select');
+  $('.s-keyword', APP).oninput   = () => updateKwHint();
   $('.s-start', APP).onclick     = () => start();
   $('.s-finish', APP).onclick    = () => startExam();
   $('.s-nav-reset', APP).onclick = () => gotoSelect();
@@ -347,6 +352,7 @@ function showScreen(name){
   ['cover','select','quiz','result'].forEach(n => {
     $('#screen-'+n, APP).classList.toggle('hidden', n!==name);
   });
+  if(name==='select') updateKwHint();
   scrollTop();
 }
 
@@ -356,6 +362,39 @@ function resetRun(){
 function gotoSelect(){ resetRun(); showScreen('select'); }
 
 // ===== 一般練習 =====
+// 依「已勾章節＋關鍵字」即時計算符合題數（與 start() 的篩選一致）
+function countMatches(){
+  const keyword = $('.s-keyword', APP).value.trim().toLowerCase();
+  const chosen  = $$('.s-sections .chip.on', APP).map(c => c.dataset.val);
+  let pool = BANK.filter(q => chosen.includes(q.section || '未分類'));
+  if(keyword){
+    pool = pool.filter(q => {
+      const t = (q.question||'').toLowerCase();
+      const o = (q.options||[]).join(' ').toLowerCase();
+      return t.includes(keyword) || o.includes(keyword);
+    });
+  }
+  return { keyword, chosenCount: chosen.length, n: pool.length };
+}
+
+// 更新關鍵字下方即時提示：沒打字不顯示；有結果報題數；沒結果提醒換字
+function updateKwHint(){
+  const hint = $('.s-kwhint', APP);
+  if(!hint) return;
+  const { keyword, chosenCount, n } = countMatches();
+  if(!keyword){ hint.className = 'kw-hint s-kwhint hidden'; hint.textContent = ''; return; }
+  if(chosenCount === 0){
+    hint.className = 'kw-hint s-kwhint bad';
+    hint.textContent = '請先選擇章節';
+  } else if(n > 0){
+    hint.className = 'kw-hint s-kwhint ok';
+    hint.textContent = `符合 ${n} 題，請按「開始練習」`;
+  } else {
+    hint.className = 'kw-hint s-kwhint bad';
+    hint.textContent = '找不到符合的題目，請換個關鍵字';
+  }
+}
+
 function start(){
   const mode    = $('.s-mode', APP).value;
   const wantStr = $('.s-count', APP).value;
